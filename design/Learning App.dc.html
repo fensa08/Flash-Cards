@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#0d0d0f;color:#f0eee8;font-family:'Inter',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#e8a945;text-decoration:none}
+a:hover{color:#f0c85a}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:9999px}
+::-webkit-scrollbar-track{background:transparent}
+@keyframes orbPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.06);opacity:1}}
+@keyframes ringOut{0%{transform:scale(.85);opacity:.5}100%{transform:scale(1.5);opacity:0}}
+@keyframes bar{0%,100%{height:14%}50%{height:88%}}
+@keyframes drift{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-18px,-24px,0)}}
+</style>
+</helmet>
+<div style="display:flex;height:100vh;width:100%;overflow:hidden;background:#0d0d0f;position:relative">
+
+<div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(620px 420px at -8% -10%,rgba(232,169,69,.07),transparent 70%),radial-gradient(700px 460px at 108% 8%,rgba(155,127,232,.07),transparent 70%),radial-gradient(900px 500px at 60% 120%,rgba(107,79,196,.06),transparent 70%)"></div>
+
+<aside style="width:250px;flex:none;height:100%;display:flex;flex-direction:column;background:#13131a;border-right:1px solid rgba(255,255,255,.08);position:relative;z-index:2">
+  <div style="padding:22px 20px 18px;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#e8a945,#c97c2a);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(232,169,69,.28)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d0d0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 6.1L20.5 11l-6.3 1.9L12 19l-2.2-6.1L3.5 11l6.3-1.9z"></path></svg>
+    </div>
+    <div>
+      <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:500;letter-spacing:-.01em;line-height:1">Lumina Learn</div>
+      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860;margin-top:3px">Study workspace</div>
+    </div>
+  </div>
+
+  <nav style="flex:1;overflow-y:auto;padding:4px 12px 12px;display:flex;flex-direction:column;gap:2px">
+    <sc-for list="{{ nav }}" as="item" hint-placeholder-count="6">
+      <div style="display:flex;flex-direction:column">
+        <button onClick="{{ item.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;transition:background 200ms cubic-bezier(.16,1,.3,1),color 200ms" style-hover="background:rgba(255,255,255,.05)" background="{{ item.bg }}" color="{{ item.color }}">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;opacity:.95"><path d="{{ item.icon }}"></path></svg>
+          <span style="flex:1;text-align:left">{{ item.label }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b6860">{{ item.meta }}</span>
+        </button>
+        <sc-if value="{{ item.showSubs }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:1px;margin:3px 0 6px 22px;padding-left:12px;border-left:1px solid rgba(255,255,255,.09)">
+            <sc-for list="{{ subs }}" as="sub" hint-placeholder-count="3">
+              <button onClick="{{ sub.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:7px 10px;border-radius:8px;font-family:'Inter',sans-serif;font-size:12.5px;transition:color 200ms" style-hover="color:#f0eee8" color="{{ sub.color }}" background="{{ sub.bg }}">{{ sub.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </nav>
+
+  <div style="margin:0 12px 14px;padding:13px;border-radius:14px;background:rgba(155,127,232,.07);border:1px solid rgba(155,127,232,.16)">
+    <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#b8a0f0;margin-bottom:6px">Study streak</div>
+    <div style="display:flex;align-items:baseline;gap:6px"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;color:#f0eee8">12</span><span style="font-size:12px;color:#9b9890">days · 4h this week</span></div>
+    <div style="display:flex;gap:3px;margin-top:9px">
+      <div style="flex:1;height:5px;border-radius:9999px;background:#9b7fe8"></div><div style="flex:1;height:5px;border-radius:9999px;background:#9b7fe8"></div><div style="flex:1;height:5px;border-radius:9999px;background:#9b7fe8"></div><div style="flex:1;height:5px;border-radius:9999px;background:#9b7fe8"></div><div style="flex:1;height:5px;border-radius:9999px;background:#9b7fe8"></div><div style="flex:1;height:5px;border-radius:9999px;background:rgba(255,255,255,.1)"></div><div style="flex:1;height:5px;border-radius:9999px;background:rgba(255,255,255,.1)"></div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid rgba(255,255,255,.08)">
+    <div style="width:28px;height:28px;border-radius:9999px;background:linear-gradient(135deg,#9b7fe8,#6b4fc4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff">NR</div>
+    <div style="flex:1"><div style="font-size:12.5px;font-weight:500">Nadia Rahman</div><div style="font-size:10.5px;color:#6b6860">Pro · 3 courses</div></div>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b6860" stroke-width="1.6" stroke-linecap="round"><path d="M12 8v.01M12 12v.01M12 16v.01"></path></svg>
+  </div>
+</aside>
+
+<main style="flex:1;min-width:0;height:100%;position:relative;z-index:1;overflow:hidden">
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div style="height:100%;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:22px 2.2%;gap:14px">
+  <div style="flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860;margin-bottom:5px">Wednesday, 9 September</div>
+      <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:34px;font-weight:400;letter-spacing:-.02em;line-height:1.1">Good evening, Nadia</div>
+    </div>
+    <div style="display:flex;gap:9px;align-items:center">
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 15px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);font-size:12.5px;font-weight:500;color:#f0eee8" style-hover="border-color:rgba(232,169,69,.6);color:#e8a945">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21"></path></svg>Ask the search agent</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 17px;border-radius:11px;background:#e8a945;color:#0d0d0f;font-size:12.5px;font-weight:600;box-shadow:0 0 24px rgba(232,169,69,.3)" style-hover="background:#f0c85a">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>New course</button>
+    </div>
+  </div>
+
+  <section style="flex:25 0 auto;min-height:165px;display:flex;flex-direction:column;gap:9px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890">This week at a glance</span><span style="font-size:11px;color:#6b6860">Last 7 days</span></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
+      <div style="min-width:0;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:space-between;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.15)">
+        <div style="font-size:11.5px;color:#9b9890">Retention score</div>
+        <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:500;color:#e8a945">84%</span><span style="font-size:11.5px;color:#6db394">+6</span></div>
+        <div style="height:4px;border-radius:9999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="width:84%;height:100%;background:#e8a945"></div></div>
+      </div>
+      <div style="min-width:0;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:space-between;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.15)">
+        <div style="font-size:11.5px;color:#9b9890">Cards reviewed</div>
+        <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:500">312</span><span style="font-size:11.5px;color:#9b9890">of 400</span></div>
+        <div style="display:flex;gap:3px;align-items:flex-end;height:22px">
+          <div style="flex:1;height:40%;background:rgba(155,127,232,.5);border-radius:2px"></div><div style="flex:1;height:65%;background:rgba(155,127,232,.5);border-radius:2px"></div><div style="flex:1;height:35%;background:rgba(155,127,232,.5);border-radius:2px"></div><div style="flex:1;height:80%;background:#9b7fe8;border-radius:2px"></div><div style="flex:1;height:55%;background:rgba(155,127,232,.5);border-radius:2px"></div><div style="flex:1;height:95%;background:#9b7fe8;border-radius:2px"></div><div style="flex:1;height:70%;background:rgba(155,127,232,.5);border-radius:2px"></div>
+        </div>
+      </div>
+      <div style="min-width:0;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:space-between;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.15)">
+        <div style="font-size:11.5px;color:#9b9890">Weak spots</div>
+        <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:500">3</span><span style="font-size:11.5px;color:#9b9890">topics</span></div>
+        <div style="font-size:11px;color:#c8c5be;line-height:1.4;overflow:hidden">Backpropagation · Bayes rule · Attention masks</div>
+      </div>
+      <div style="min-width:0;padding:16px 18px;border-radius:16px;background:rgba(232,169,69,.07);border:1px solid rgba(232,169,69,.2);display:flex;flex-direction:column;justify-content:space-between;transition:border-color 200ms" style-hover="border-color:rgba(232,169,69,.45)">
+        <div style="font-size:11.5px;color:#f7dfa0">Next best action</div>
+        <div style="font-size:14px;font-weight:500;line-height:1.35;color:#f0eee8">Review 18 due cards in Deep Learning</div>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;font-size:11.5px;font-weight:600;color:#e8a945;letter-spacing:.02em" style-hover="color:#f0c85a">Start 6-min session →</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="flex:40 0 auto;min-height:230px;display:flex;flex-direction:column;gap:9px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890">Recently accessed</span><a href="#" style="font-size:11.5px;color:#9b9890" style-hover="color:#e8a945">View all activity</a></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+      <div style="min-width:0;padding:18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color 200ms,transform 200ms cubic-bezier(.16,1,.3,1)" style-hover="border-color:rgba(255,255,255,.15);transform:translateY(-2px)">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:rgba(155,127,232,.14);color:#b8a0f0">Notes</span><span style="font-size:10.5px;color:#6b6860">14m ago</span></div>
+        <div style="flex:1;min-height:0"><div style="font-size:16px;font-weight:500;line-height:1.3">Transformers — attention &amp; positional encoding</div><div style="font-size:12px;color:#9b9890;margin-top:6px;line-height:1.5">Chapter 4 of 9 · generated from 2 PDFs</div></div>
+        <div style="display:flex;align-items:center;gap:9px"><div style="flex:1;height:4px;border-radius:9999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="width:62%;height:100%;background:#9b7fe8"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#9b9890">62%</span></div>
+      </div>
+      <div style="min-width:0;padding:18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color 200ms,transform 200ms cubic-bezier(.16,1,.3,1)" style-hover="border-color:rgba(255,255,255,.15);transform:translateY(-2px)">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:rgba(232,169,69,.14);color:#f7dfa0">Flashcards</span><span style="font-size:10.5px;color:#6b6860">Yesterday</span></div>
+        <div style="flex:1;min-height:0"><div style="font-size:16px;font-weight:500;line-height:1.3">Probability foundations deck</div><div style="font-size:12px;color:#9b9890;margin-top:6px;line-height:1.5">96 cards · 18 due today</div></div>
+        <div style="display:flex;align-items:center;gap:9px"><div style="flex:1;height:4px;border-radius:9999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="width:81%;height:100%;background:#e8a945"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#9b9890">81%</span></div>
+      </div>
+      <div style="min-width:0;padding:18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color 200ms,transform 200ms cubic-bezier(.16,1,.3,1)" style-hover="border-color:rgba(255,255,255,.15);transform:translateY(-2px)">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:rgba(109,179,148,.14);color:#8bcba8">Mentor</span><span style="font-size:10.5px;color:#6b6860">2 days ago</span></div>
+        <div style="flex:1;min-height:0"><div style="font-size:16px;font-weight:500;line-height:1.3">Voice session — gradient descent intuition</div><div style="font-size:12px;color:#9b9890;margin-top:6px;line-height:1.5">21 min · transcript &amp; summary saved</div></div>
+        <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#8bcba8"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg>Follow-ups answered</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="flex:40 0 auto;min-height:160px;display:flex;flex-direction:column;gap:9px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890">Favorites</span><a href="#" style="font-size:11.5px;color:#9b9890" style-hover="color:#e8a945">Manage</a></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
+      <div style="min-width:0;padding:16px;border-radius:16px;background:linear-gradient(160deg,rgba(155,127,232,.13),rgba(255,255,255,.03));border:1px solid rgba(155,127,232,.18);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(155,127,232,.5)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b8a0f0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z"></path></svg>
+        <div><div style="font-size:14px;font-weight:500;line-height:1.3">Deep Learning</div><div style="font-size:11px;color:#9b9890;margin-top:4px">9 chapters · 240 cards</div></div>
+      </div>
+      <div style="min-width:0;padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.15)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8a945" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h10l6 6v10H4zM14 4v6h6"></path></svg>
+        <div><div style="font-size:14px;font-weight:500;line-height:1.3">Linear Algebra Refresher</div><div style="font-size:11px;color:#9b9890;margin-top:4px">Built from lecture PDF</div></div>
+      </div>
+      <div style="min-width:0;padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.15)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8bcba8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21"></path></svg>
+        <div><div style="font-size:14px;font-weight:500;line-height:1.3">Saved research: RLHF papers</div><div style="font-size:11px;color:#9b9890;margin-top:4px">11 sources from Exa</div></div>
+      </div>
+      <div style="min-width:0;padding:16px;border-radius:16px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:#6b6860;transition:color 200ms,border-color 200ms" style-hover="color:#e8a945;border-color:rgba(232,169,69,.4)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        <span style="font-size:12px">Pin a course or deck</span>
+      </div>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBuilder }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;padding:2.5% 2.2%;gap:18px;overflow-y:auto">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860;margin-bottom:5px">Course Builder</div>
+      <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;font-weight:400;letter-spacing:-.02em;line-height:1.1">{{ subTitle }}</div>
+    </div>
+    <div style="display:flex;gap:6px;padding:5px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+      <sc-for list="{{ subs }}" as="sub" hint-placeholder-count="3">
+        <button onClick="{{ sub.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:8px 14px;border-radius:9px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;transition:all 200ms" background="{{ sub.pillBg }}" color="{{ sub.pillColor }}">{{ sub.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isDrop }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px">
+    <div style="border-radius:20px;border:1.5px dashed rgba(232,169,69,.35);background:rgba(232,169,69,.05);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;text-align:center;min-height:320px">
+      <div style="width:56px;height:56px;border-radius:18px;background:rgba(232,169,69,.14);display:flex;align-items:center;justify-content:center">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e8a945" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4l4 4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"></path></svg>
+      </div>
+      <div style="font-size:20px;font-weight:500">Drop a PDF, slide deck, or paste text</div>
+      <div style="font-size:13px;color:#9b9890;max-width:400px;line-height:1.6">We read the structure first — headings, figures, and definitions — then propose a chapter outline before generating anything.</div>
+      <div style="display:flex;gap:9px;margin-top:4px">
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:11px;background:#e8a945;color:#0d0d0f;font-size:12.5px;font-weight:600;box-shadow:0 0 24px rgba(232,169,69,.3)" style-hover="background:#f0c85a">Choose files</button>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);font-size:12.5px;font-weight:500;color:#f0eee8" style-hover="border-color:rgba(255,255,255,.25)">Paste text instead</button>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6860;margin-top:2px">PDF · DOCX · PPTX · MD · TXT · up to 80 MB</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+      <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890">In this upload</div>
+      <div style="padding:15px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;gap:12px;align-items:center">
+        <div style="width:34px;height:34px;flex:none;border-radius:9px;background:rgba(232,169,69,.14);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#e8a945">PDF</div>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">CS231n_lecture_notes.pdf</div><div style="font-size:11px;color:#9b9890;margin-top:2px">184 pages · parsed</div></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6db394" stroke-width="1.8" stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg>
+      </div>
+      <div style="padding:15px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(155,127,232,.2);display:flex;gap:12px;align-items:center">
+        <div style="width:34px;height:34px;flex:none;border-radius:9px;background:rgba(155,127,232,.16);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#b8a0f0">TXT</div>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500">Pasted seminar notes</div><div style="font-size:11px;color:#9b9890;margin-top:2px">Extracting concepts — 68%</div></div>
+        <div style="width:30px;height:4px;border-radius:9999px;background:rgba(255,255,255,.1);overflow:hidden"><div style="width:68%;height:100%;background:#9b7fe8"></div></div>
+      </div>
+      <div style="margin-top:6px;padding:16px;border-radius:14px;background:rgba(155,127,232,.07);border:1px solid rgba(155,127,232,.16)">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b8a0f0;margin-bottom:8px">Proposed outline</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:12.5px;color:#c8c5be">
+          <div style="display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6b6860">01</span>Image classification &amp; kNN</div>
+          <div style="display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6b6860">02</span>Loss functions and optimisation</div>
+          <div style="display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6b6860">03</span>Backpropagation, step by step</div>
+          <div style="display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6b6860">04</span>Convolutional architectures</div>
+        </div>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:13px;width:100%;text-align:center;padding:11px;border-radius:11px;background:#9b7fe8;color:#0d0d0f;font-size:12.5px;font-weight:600" style-hover="background:#b8a0f0">Build course from outline</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isGenerate }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px">
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <div style="padding:18px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+        <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890;margin-bottom:10px">What should this course teach?</div>
+        <div style="padding:14px;border-radius:12px;background:#0d0d0f;border:1px solid rgba(155,127,232,.4);font-size:14px;line-height:1.6;color:#f0eee8;min-height:104px;box-shadow:0 0 0 4px rgba(155,127,232,.08)">A practical course on evaluating LLM agents — benchmarks, failure modes, and how to design a rubric for my own team.<span style="display:inline-block;width:1.5px;height:16px;background:#9b7fe8;vertical-align:-3px;margin-left:2px"></span></div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(232,169,69,.12);color:#f7dfa0;border:1px solid rgba(232,169,69,.2)">Intermediate</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(255,255,255,.05);color:#c8c5be;border:1px solid rgba(255,255,255,.1)">6 chapters</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(255,255,255,.05);color:#c8c5be;border:1px solid rgba(255,255,255,.1)">Cite sources</span>
+        </div>
+      </div>
+      <div style="padding:18px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890">Research sources</div>
+        <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:19px;border-radius:9999px;background:#e8a945;padding:2px;display:flex;justify-content:flex-end"><div style="width:15px;height:15px;border-radius:9999px;background:#0d0d0f"></div></div><span style="font-size:13px;flex:1">Exa web search</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6b6860">24 pages</span></div>
+        <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:19px;border-radius:9999px;background:#e8a945;padding:2px;display:flex;justify-content:flex-end"><div style="width:15px;height:15px;border-radius:9999px;background:#0d0d0f"></div></div><span style="font-size:13px;flex:1">arXiv &amp; papers</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6b6860">9 papers</span></div>
+        <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:19px;border-radius:9999px;background:rgba(255,255,255,.12);padding:2px;display:flex"><div style="width:15px;height:15px;border-radius:9999px;background:#6b6860"></div></div><span style="font-size:13px;flex:1;color:#9b9890">My uploaded library</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6b6860">off</span></div>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:4px;text-align:center;padding:13px;border-radius:12px;background:#e8a945;color:#0d0d0f;font-size:13px;font-weight:600;box-shadow:0 0 24px rgba(232,169,69,.3)" style-hover="background:#f0c85a">Generate + research</button>
+      </div>
+    </div>
+    <div style="min-width:0;padding:20px;border-radius:18px;background:rgba(155,127,232,.06);border:1px solid rgba(155,127,232,.16);display:flex;flex-direction:column;gap:14px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="width:8px;height:8px;border-radius:9999px;background:#9b7fe8;box-shadow:0 0 12px #9b7fe8"></div>
+        <span style="font-size:12.5px;font-weight:500;color:#d3c6f8">Researching — step 3 of 5</span>
+        <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:#9b9890">00:42</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px;font-size:12.5px;line-height:1.55">
+        <div style="display:flex;gap:10px;color:#9b9890"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6db394" stroke-width="1.8" stroke-linecap="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Framed 6 chapters around eval lifecycle</div>
+        <div style="display:flex;gap:10px;color:#9b9890"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6db394" stroke-width="1.8" stroke-linecap="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Pulled 24 sources, dropped 7 low-signal</div>
+        <div style="display:flex;gap:10px;color:#f0eee8"><span style="width:15px;flex:none;text-align:center;color:#9b7fe8">•</span>Drafting Chapter 3 — "Designing a rubric"</div>
+        <div style="display:flex;gap:10px;color:#6b6860"><span style="width:15px;flex:none;text-align:center">•</span>Generate 40 flashcards + 20 MCQs</div>
+        <div style="display:flex;gap:10px;color:#6b6860"><span style="width:15px;flex:none;text-align:center">•</span>Cross-link to Deep Learning course</div>
+      </div>
+      <div style="margin-top:auto;padding:15px;border-radius:14px;background:rgba(13,13,15,.6);border:1px solid rgba(255,255,255,.08)">
+        <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890;margin-bottom:9px">Top sources so far</div>
+        <div style="display:flex;flex-direction:column;gap:9px;font-size:12px">
+          <div style="display:flex;gap:9px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e8a945">01</span><span style="flex:1;color:#c8c5be">Holistic Evaluation of Language Models</span><span style="font-size:10.5px;color:#6b6860">arXiv</span></div>
+          <div style="display:flex;gap:9px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e8a945">02</span><span style="flex:1;color:#c8c5be">Agent benchmarks are broken — and how to fix them</span><span style="font-size:10.5px;color:#6b6860">blog</span></div>
+          <div style="display:flex;gap:9px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e8a945">03</span><span style="flex:1;color:#c8c5be">Rubric design for human graders</span><span style="font-size:10.5px;color:#6b6860">paper</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isBrowse }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b6860" stroke-width="1.6" stroke-linecap="round"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21"></path></svg>
+        <span style="font-size:13px;color:#6b6860">Search 148 materials…</span>
+      </div>
+      <span style="font-size:12px;padding:9px 14px;border-radius:9999px;background:rgba(232,169,69,.12);color:#f7dfa0;border:1px solid rgba(232,169,69,.22)">All</span>
+      <span style="font-size:12px;padding:9px 14px;border-radius:9999px;background:rgba(255,255,255,.04);color:#c8c5be;border:1px solid rgba(255,255,255,.1)">PDFs</span>
+      <span style="font-size:12px;padding:9px 14px;border-radius:9999px;background:rgba(255,255,255,.04);color:#c8c5be;border:1px solid rgba(255,255,255,.1)">Web sources</span>
+      <span style="font-size:12px;padding:9px 14px;border-radius:9999px;background:rgba(255,255,255,.04);color:#c8c5be;border:1px solid rgba(255,255,255,.1)">Generated notes</span>
+    </div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-rows:150px;gap:14px;overflow-y:auto;padding-right:4px">
+      <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#e8a945">PDF · 184p</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">CS231n lecture notes</div><div style="font-size:11px;color:#6b6860;margin-top:5px">Used in 2 courses</div></div></div>
+      <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#b8a0f0">NOTES · 9 ch</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">Transformers, distilled</div><div style="font-size:11px;color:#6b6860;margin-top:5px">Generated 3 days ago</div></div></div>
+      <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8bcba8">WEB · 11 src</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">RLHF reading list</div><div style="font-size:11px;color:#6b6860;margin-top:5px">Collected by search agent</div></div></div>
+      <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#e8a945">SLIDES · 62</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">Optimisation seminar deck</div><div style="font-size:11px;color:#6b6860;margin-top:5px">Not yet used</div></div></div>
+      <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#b8a0f0">NOTES · 4 ch</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">Probability foundations</div><div style="font-size:11px;color:#6b6860;margin-top:5px">96 cards linked</div></div></div>
+      <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#6b6860;cursor:pointer;transition:color 200ms,border-color 200ms" style-hover="color:#e8a945;border-color:rgba(232,169,69,.4)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg><span style="font-size:12px">Add material</span></div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLearning }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;overflow:hidden">
+  <div style="width:236px;flex:none;height:100%;padding:2.5% 18px;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:14px;overflow-y:auto">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860">Course</div>
+      <div style="font-size:15px;font-weight:500;margin-top:6px;line-height:1.35">Transformers, distilled</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:9px"><div style="flex:1;height:4px;border-radius:9999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="width:62%;height:100%;background:#9b7fe8"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#9b9890">62%</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="padding:8px 10px;border-radius:8px;font-size:12.5px;color:#9b9890;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6db394">✓</span>Sequence models before attention</div>
+      <div style="padding:8px 10px;border-radius:8px;font-size:12.5px;color:#9b9890;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6db394">✓</span>Self-attention from scratch</div>
+      <div style="padding:8px 10px;border-radius:8px;font-size:12.5px;color:#9b9890;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6db394">✓</span>Multi-head attention</div>
+      <div style="padding:8px 10px;border-radius:8px;background:rgba(155,127,232,.14);font-size:12.5px;color:#f0eee8;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#9b7fe8">04</span>Positional encoding</div>
+      <div style="padding:8px 10px;border-radius:8px;font-size:12.5px;color:#6b6860;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace">05</span>Encoder–decoder stacks</div>
+      <div style="padding:8px 10px;border-radius:8px;font-size:12.5px;color:#6b6860;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace">06</span>Training tricks &amp; scaling</div>
+    </div>
+    <div style="margin-top:auto;padding:13px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+      <div style="font-size:11.5px;color:#9b9890;line-height:1.5">Notes preview — generated from your uploads. Edits sync to cards.</div>
+    </div>
+  </div>
+  <div style="flex:1;min-width:0;height:100%;overflow-y:auto;padding:2.5% 4%">
+    <div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border-radius:6px;background:rgba(155,127,232,.14);color:#b8a0f0">Chapter 04</span>
+        <span style="font-size:11.5px;color:#6b6860">8 min read · 12 cards · 4 sources</span>
+        <div style="margin-left:auto;display:flex;gap:7px">
+          <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:8px 13px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);font-size:11.5px;font-weight:500;color:#f0eee8" style-hover="border-color:rgba(255,255,255,.25)">Simplify</button>
+          <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:8px 13px;border-radius:9px;background:rgba(232,169,69,.14);border:1px solid rgba(232,169,69,.28);font-size:11.5px;font-weight:600;color:#e8a945" style-hover="background:rgba(232,169,69,.22)">Test me on this</button>
+        </div>
+      </div>
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:38px;font-weight:400;letter-spacing:-.02em;line-height:1.15;margin:0">Positional encoding</h2>
+      <p style="font-size:16px;line-height:1.7;color:#c8c5be;margin:0">Attention is permutation-invariant: shuffle the tokens and the maths gives you the same answer. Position has to be <em style="color:#f0eee8;font-style:normal;background:rgba(232,169,69,.16);padding:1px 4px;border-radius:4px">injected into the embeddings</em> rather than inferred from the operation itself.</p>
+      <div style="padding:18px 20px;border-radius:16px;background:rgba(155,127,232,.07);border:1px solid rgba(155,127,232,.18);display:flex;gap:14px">
+        <div style="width:26px;height:26px;flex:none;border-radius:9999px;background:linear-gradient(135deg,#9b7fe8,#6b4fc4);display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="6"></circle></svg></div>
+        <div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b8a0f0;margin-bottom:6px">Why it matters</div><div style="font-size:14.5px;line-height:1.65;color:#f0eee8">Sinusoidal encodings let a model extrapolate to sequence lengths it never saw in training — learned embeddings usually cannot.</div></div>
+      </div>
+      <h3 style="font-size:19px;font-weight:600;margin:6px 0 0">The sinusoidal formulation</h3>
+      <div style="padding:20px;border-radius:14px;background:#13131a;border:1px solid rgba(255,255,255,.08);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9;color:#c8c5be">PE(pos, 2i)&nbsp;&nbsp;= sin(pos / 10000^(2i/d))<br>PE(pos, 2i+1) = cos(pos / 10000^(2i/d))</div>
+      <p style="font-size:16px;line-height:1.7;color:#c8c5be;margin:0">Each dimension traces a sinusoid of a different wavelength, so relative offsets become linear functions of the encoding — the property that makes attention able to reason about "three tokens back".</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;padding:16px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9b9890;width:100%">Sourced from</div>
+        <span style="font-size:12px;padding:6px 11px;border-radius:9999px;background:rgba(255,255,255,.05);color:#c8c5be;border:1px solid rgba(255,255,255,.1)">Attention Is All You Need · §3.5</span>
+        <span style="font-size:12px;padding:6px 11px;border-radius:9999px;background:rgba(255,255,255,.05);color:#c8c5be;border:1px solid rgba(255,255,255,.1)">CS231n notes · p.142</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);margin-bottom:20px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9b7fe8" stroke-width="1.6" stroke-linecap="round"><path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3"></path></svg>
+        <span style="font-size:13px;color:#9b9890;flex:1">Confused by a passage? Highlight it and ask the mentor out loud.</span>
+        <button onClick="{{ goMentor }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:9px 15px;border-radius:10px;background:rgba(155,127,232,.16);border:1px solid rgba(155,127,232,.3);font-size:12px;font-weight:600;color:#b8a0f0" style-hover="background:rgba(155,127,232,.28)">Open voice mode</button>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTesting }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;padding:2.5% 2.2%;gap:20px;overflow-y:auto">
+  <div>
+    <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860;margin-bottom:5px">Testing · Transformers, distilled</div>
+    <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;font-weight:400;letter-spacing:-.02em;line-height:1.1">How do you want to be tested?</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+    <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+      <button onClick="{{ m.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:20px;border-radius:18px;display:flex;flex-direction:column;gap:11px;font-family:'Inter',sans-serif;transition:all 200ms cubic-bezier(.16,1,.3,1)" background="{{ m.bg }}" border="{{ m.border }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" color="{{ m.iconColor }}"><path d="{{ m.icon }}"></path></svg>
+        <div style="font-size:16px;font-weight:500;color:#f0eee8">{{ m.title }}</div>
+        <div style="font-size:12.5px;line-height:1.55;color:#9b9890">{{ m.desc }}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6860;margin-top:2px">{{ m.meta }}</div>
+      </button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ isFlash }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6b6860;letter-spacing:.08em">CARD 7 / 40 · 18 DUE</div>
+    <button onClick="{{ flip }}" style="all:unset;box-sizing:border-box;cursor:pointer;width:min(560px,100%);min-height:250px;padding:36px;border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 24px 64px rgba(0,0,0,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;font-family:'Inter',sans-serif">
+      <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890">{{ cardSide }}</div>
+      <div style="font-size:23px;line-height:1.45;font-weight:400;color:#f0eee8">{{ cardText }}</div>
+      <div style="font-size:11.5px;color:#6b6860">{{ cardHint }}</div>
+    </button>
+    <div style="display:flex;gap:10px">
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:11px;background:rgba(232,107,107,.12);border:1px solid rgba(232,107,107,.28);font-size:12.5px;font-weight:600;color:#e86b6b" style-hover="background:rgba(232,107,107,.2)">Again</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);font-size:12.5px;font-weight:500;color:#c8c5be" style-hover="border-color:rgba(255,255,255,.25)">Hard</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:11px;background:rgba(109,179,148,.14);border:1px solid rgba(109,179,148,.3);font-size:12.5px;font-weight:600;color:#8bcba8" style-hover="background:rgba(109,179,148,.24)">Good</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:11px;background:rgba(232,169,69,.14);border:1px solid rgba(232,169,69,.3);font-size:12.5px;font-weight:600;color:#e8a945" style-hover="background:rgba(232,169,69,.24)">Easy</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isMcq }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:flex;justify-content:center">
+    <div style="width:min(700px,100%);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex:1;height:4px;border-radius:9999px;background:rgba(255,255,255,.08);overflow:hidden"><div style="width:35%;height:100%;background:#e8a945"></div></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#9b9890">Q7 / 20</span>
+      </div>
+      <div style="padding:24px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:16px">
+        <div style="font-size:19px;line-height:1.5;font-weight:500">Why do sinusoidal positional encodings generalise to longer sequences than learned ones?</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ choices }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:13px;align-items:flex-start;padding:15px 17px;border-radius:13px;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;transition:all 200ms" background="{{ c.bg }}" border="{{ c.border }}" color="{{ c.color }}">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;flex:none;width:18px;height:18px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.07);margin-top:1px">{{ c.key }}</span>
+              <span style="flex:1">{{ c.text }}</span>
+              <span style="font-size:12px;flex:none">{{ c.mark }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ answered }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:15px 17px;border-radius:13px;background:rgba(155,127,232,.08);border:1px solid rgba(155,127,232,.2);font-size:13.5px;line-height:1.6;color:#d3c6f8">Relative offsets are a linear function of sinusoidal encodings, so the pattern continues past training lengths. Learned tables simply have no row for position 5,000.</div>
+        </sc-if>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button onClick="{{ nextQ }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:12px 22px;border-radius:11px;background:#e8a945;color:#0d0d0f;font-size:12.5px;font-weight:600;box-shadow:0 0 24px rgba(232,169,69,.3)" style-hover="background:#f0c85a">Next question</button>
+          <button onClick="{{ goMentor }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:12px 18px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);font-size:12.5px;font-weight:500;color:#c8c5be" style-hover="border-color:rgba(155,127,232,.5);color:#b8a0f0">Explain with AI Tutor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTutor }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:flex;justify-content:center">
+    <div style="width:min(700px,100%);padding:24px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px"><div style="width:26px;height:26px;border-radius:9999px;background:linear-gradient(135deg,#9b7fe8,#6b4fc4)"></div><div><div style="font-size:13px;font-weight:600;color:#b8a0f0">AI Tutor</div><div style="font-size:11px;color:#6b6860">Socratic mode · knows your last 3 wrong answers</div></div></div>
+      <div style="align-self:flex-start;max-width:80%;padding:13px 16px;border-radius:16px;border-bottom-left-radius:4px;background:rgba(155,127,232,.09);border:1px solid rgba(155,127,232,.16);font-size:14px;line-height:1.6;color:#f0eee8">You missed two questions on positional encoding. Before I explain — what happens to attention scores if I reverse the token order?</div>
+      <div style="align-self:flex-end;max-width:78%;padding:13px 16px;border-radius:16px;border-bottom-right-radius:4px;background:#e8a945;color:#0d0d0f;font-size:14px;font-weight:500;line-height:1.6">Nothing? The scores are the same set.</div>
+      <div style="align-self:flex-start;max-width:80%;padding:13px 16px;border-radius:16px;border-bottom-left-radius:4px;background:rgba(155,127,232,.09);border:1px solid rgba(155,127,232,.16);font-size:14px;line-height:1.6;color:#f0eee8">Exactly — and that's the whole problem. So where must order information come from?</div>
+      <div style="margin-top:auto;display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:13px;background:#0d0d0f;border:1px solid rgba(155,127,232,.35)">
+        <span style="flex:1;font-size:13.5px;color:#6b6860">Type your answer…</span>
+        <button onClick="{{ goMentor }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#b8a0f0" style-hover="color:#d3c6f8"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3"></path></svg>Voice</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;padding:2.5% 2.2%;gap:18px;overflow-y:auto">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+    <div>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px"><span style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860">Search agent</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 7px;border-radius:6px;background:rgba(109,179,148,.14);color:#8bcba8">EXA · LIVE</span></div>
+      <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;font-weight:400;letter-spacing:-.02em;line-height:1.1">Find the best sources, not the most</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:11px;align-items:center;padding:15px 18px;border-radius:15px;background:rgba(255,255,255,.05);border:1px solid rgba(155,127,232,.35);box-shadow:0 0 0 4px rgba(155,127,232,.07)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9b7fe8" stroke-width="1.6" stroke-linecap="round"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21"></path></svg>
+    <span style="flex:1;font-size:15px;color:#f0eee8">best practical explanations of rotary positional embeddings</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6860">neural search</span>
+    <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:9px 16px;border-radius:10px;background:#9b7fe8;color:#0d0d0f;font-size:12px;font-weight:600" style-hover="background:#b8a0f0">Search</button>
+  </div>
+  <div style="display:flex;gap:18px;flex:1;min-height:0;align-items:flex-start;flex-wrap:wrap">
+    <div style="flex:1;min-width:320px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9b9890">14 results · ranked by relevance</span><span style="font-size:11.5px;color:#6b6860">Select to add to a course</span></div>
+      <div style="padding:17px 19px;border-radius:16px;background:rgba(232,169,69,.06);border:1px solid rgba(232,169,69,.22);display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;align-items:center;gap:9px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e8a945">01</span><span style="font-size:15px;font-weight:500;flex:1">RoFormer: Rotary Position Embedding</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#f7dfa0">0.94</span></div>
+        <div style="font-size:12.5px;line-height:1.6;color:#c8c5be">The original derivation — rotates query and key vectors so the dot product encodes relative distance. Dense, but the section-3 walkthrough is the clearest primary source.</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:11px;padding:4px 9px;border-radius:6px;background:rgba(255,255,255,.06);color:#9b9890">arxiv.org</span><span style="font-size:11px;color:#6b6860">2021 · cited 1.2k</span><button style="all:unset;box-sizing:border-box;cursor:pointer;margin-left:auto;font-size:11.5px;font-weight:600;color:#e8a945" style-hover="color:#f0c85a">+ Add to course</button></div>
+      </div>
+      <div style="padding:17px 19px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:9px;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.18)">
+        <div style="display:flex;align-items:center;gap:9px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e8a945">02</span><span style="font-size:15px;font-weight:500;flex:1">Rotary embeddings, visually</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#9b9890">0.91</span></div>
+        <div style="font-size:12.5px;line-height:1.6;color:#c8c5be">Animated 2D rotations with an interactive slider — the fastest intuition build if you skip the proofs.</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:11px;padding:4px 9px;border-radius:6px;background:rgba(255,255,255,.06);color:#9b9890">blog</span><span style="font-size:11px;color:#6b6860">9 min read</span><button style="all:unset;box-sizing:border-box;cursor:pointer;margin-left:auto;font-size:11.5px;font-weight:600;color:#9b9890" style-hover="color:#e8a945">+ Add to course</button></div>
+      </div>
+      <div style="padding:17px 19px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:9px;transition:border-color 200ms" style-hover="border-color:rgba(255,255,255,.18)">
+        <div style="display:flex;align-items:center;gap:9px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#e8a945">03</span><span style="font-size:15px;font-weight:500;flex:1">Extending context: RoPE scaling in practice</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#9b9890">0.88</span></div>
+        <div style="font-size:12.5px;line-height:1.6;color:#c8c5be">Engineering notes on interpolation vs. NTK scaling, with benchmark tables you can lift into a chapter.</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:11px;padding:4px 9px;border-radius:6px;background:rgba(255,255,255,.06);color:#9b9890">engineering blog</span><span style="font-size:11px;color:#6b6860">2024</span><button style="all:unset;box-sizing:border-box;cursor:pointer;margin-left:auto;font-size:11.5px;font-weight:600;color:#9b9890" style-hover="color:#e8a945">+ Add to course</button></div>
+      </div>
+    </div>
+    <div style="width:300px;flex:none;display:flex;flex-direction:column;gap:12px">
+      <div style="padding:18px;border-radius:16px;background:rgba(155,127,232,.07);border:1px solid rgba(155,127,232,.18)">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b8a0f0;margin-bottom:9px">Agent summary</div>
+        <div style="font-size:13px;line-height:1.65;color:#f0eee8">Three sources cover this well: read the visual explainer first, then §3 of RoFormer, then the scaling notes. Skip the six tutorial reposts — they paraphrase the paper without adding intuition.</div>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:13px;width:100%;text-align:center;padding:11px;border-radius:11px;background:#9b7fe8;color:#0d0d0f;font-size:12.5px;font-weight:600" style-hover="background:#b8a0f0">Turn 3 sources into a chapter</button>
+      </div>
+      <div style="padding:18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9b9890">Filters</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(232,169,69,.12);color:#f7dfa0;border:1px solid rgba(232,169,69,.22)">Papers</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(232,169,69,.12);color:#f7dfa0;border:1px solid rgba(232,169,69,.22)">Explainers</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(255,255,255,.05);color:#9b9890;border:1px solid rgba(255,255,255,.1)">Video</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(255,255,255,.05);color:#9b9890;border:1px solid rgba(255,255,255,.1)">Forums</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(255,255,255,.05);color:#9b9890;border:1px solid rgba(255,255,255,.1)">Last 2 years</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMentor }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:3% 2.2%;position:relative;overflow:hidden">
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px 520px at 50% 44%,rgba(155,127,232,.16),transparent 70%)"></div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860">AI Mentor · voice mode</div>
+    <div style="font-size:14px;color:#9b9890">{{ statusLabel }}</div>
+  </div>
+  <div style="position:relative;z-index:1;width:220px;height:220px;display:flex;align-items:center;justify-content:center">{{ orb }}</div>
+  <div style="position:relative;z-index:1;display:flex;align-items:flex-end;gap:4px;height:36px">{{ wave }}</div>
+  <div style="position:relative;z-index:1;width:min(620px,100%);text-align:center;display:flex;flex-direction:column;gap:12px">
+    <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:400;line-height:1.4;color:#f0eee8">"Walk me through why my rubric keeps rewarding verbose answers."</div>
+    <div style="font-size:14px;line-height:1.7;color:#9b9890">Because length correlates with your "thoroughness" criterion. Let's separate coverage from verbosity — I'll suggest two rewrites, then quiz you on which one a lazy grader would abuse.</div>
+  </div>
+  <div style="position:relative;z-index:1;display:flex;align-items:center;gap:12px">
+    <button style="all:unset;box-sizing:border-box;cursor:pointer;width:48px;height:48px;border-radius:9999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:#c8c5be" style-hover="border-color:rgba(255,255,255,.28);color:#f0eee8" title="Mute">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3"></path></svg>
+    </button>
+    <button onClick="{{ toggleListen }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:15px 30px;border-radius:9999px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:9px;transition:all 200ms" background="{{ listenBg }}" color="{{ listenColor }}" box-shadow="{{ listenShadow }}">{{ listenLabel }}</button>
+    <button style="all:unset;box-sizing:border-box;cursor:pointer;width:48px;height:48px;border-radius:9999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:#c8c5be" style-hover="border-color:rgba(255,255,255,.28);color:#f0eee8" title="Transcript">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h8"></path></svg>
+    </button>
+  </div>
+  <div style="position:relative;z-index:1;display:flex;gap:9px;flex-wrap:wrap;justify-content:center">
+    <span style="font-size:11.5px;padding:7px 13px;border-radius:9999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#9b9890">Context: LLM Evaluation · ch. 3</span>
+    <span style="font-size:11.5px;padding:7px 13px;border-radius:9999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#9b9890">Saves transcript &amp; new cards</span>
+  </div>
+</div>
+</sc-if>
+
+</main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;activeTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;builder&quot;,&quot;learning&quot;,&quot;testing&quot;,&quot;search&quot;,&quot;mentor&quot;],&quot;default&quot;:&quot;overview&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Mockup state&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#e8a945&quot;,&quot;options&quot;:[&quot;#e8a945&quot;,&quot;#9b7fe8&quot;,&quot;#6db394&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  state = { tab: null, sub: 'drop', test: 'flash', flipped: false, picked: null, listening: true };
+
+  get tab() { return this.state.tab || this.props.activeTab || 'overview'; }
+
+  go(tab) { return () => this.setState({ tab }); }
+
+  renderVals() {
+    const tab = this.tab, accent = this.props.accent ?? '#e8a945';
+    const navDefs = [
+      { id: 'overview', label: 'Overview', icon: 'M3 11.5L12 4l9 7.5M5.5 10v9.5h13V10', meta: '' },
+      { id: 'builder', label: 'Course Builder', icon: 'M4 4h10l6 6v10H4zM14 4v6h6', meta: '3' },
+      { id: 'learning', label: 'Learning', icon: 'M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z', meta: '' },
+      { id: 'testing', label: 'Testing', icon: 'M9 3h6v3l-4 6v6a2 2 0 004 0v-6l-4-6', meta: '18' },
+      { id: 'search', label: 'Search Agent', icon: 'M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21', meta: '' },
+      { id: 'mentor', label: 'AI Mentor', icon: 'M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3', meta: '' },
+    ];
+    const nav = navDefs.map(n => ({
+      ...n,
+      bg: tab === n.id ? 'rgba(232,169,69,0.12)' : 'transparent',
+      color: tab === n.id ? accent : '#9b9890',
+      showSubs: n.id === 'builder' && tab === 'builder',
+      onClick: this.go(n.id),
+    }));
+
+    const subDefs = [
+      { id: 'drop', label: 'Drop Text / PDF' },
+      { id: 'generate', label: 'Generate + Research' },
+      { id: 'browse', label: 'Browse Materials' },
+    ];
+    const subs = subDefs.map(s => ({
+      label: s.label,
+      color: this.state.sub === s.id ? '#f0eee8' : '#9b9890',
+      bg: this.state.sub === s.id ? 'rgba(255,255,255,.05)' : 'transparent',
+      pillBg: this.state.sub === s.id ? 'rgba(232,169,69,.14)' : 'transparent',
+      pillColor: this.state.sub === s.id ? accent : '#9b9890',
+      onClick: () => this.setState({ tab: 'builder', sub: s.id }),
+    }));
+    const subTitle = (subDefs.find(s => s.id === this.state.sub) || subDefs[0]).label;
+
+    const modeDefs = [
+      { id: 'flash', title: 'Flashcards', desc: 'Spaced repetition over every concept the notes marked as testable.', meta: '40 CARDS · 18 DUE', icon: 'M4 6h11v10H4zM8 4h12v10' },
+      { id: 'mcq', title: 'Four-choice quiz', desc: 'Multiple choice with distractors written from your weak spots.', meta: '20 QUESTIONS · 12 MIN', icon: 'M5 7h14M5 12h14M5 17h9M3 7h.01M3 12h.01M3 17h.01' },
+      { id: 'tutor', title: 'AI Tutor', desc: 'Socratic back-and-forth that adapts to what you just got wrong.', meta: 'CHAT · VOICE READY', icon: 'M4 5h16v10H9l-5 4z' },
+    ];
+    const modes = modeDefs.map(m => ({
+      ...m,
+      bg: this.state.test === m.id ? 'rgba(232,169,69,.09)' : 'rgba(255,255,255,.04)',
+      border: this.state.test === m.id ? '1px solid rgba(232,169,69,.4)' : '1px solid rgba(255,255,255,.08)',
+      iconColor: this.state.test === m.id ? accent : '#9b7fe8',
+      onClick: () => this.setState({ tab: 'testing', test: m.id }),
+    }));
+
+    const choiceDefs = [
+      { key: 'A', text: 'They use fewer parameters, so they overfit less to sequence length.', ok: false },
+      { key: 'B', text: 'Relative offsets are a linear function of the encoding, so the pattern extends past training lengths.', ok: true },
+      { key: 'C', text: 'They are re-normalised at inference time for the observed sequence length.', ok: false },
+      { key: 'D', text: 'Attention ignores positional signal beyond the training window anyway.', ok: false },
+    ];
+    const picked = this.state.picked;
+    const choices = choiceDefs.map(c => {
+      let bg = 'rgba(255,255,255,.03)', border = '1px solid rgba(255,255,255,.1)', color = '#c8c5be', mark = '';
+      if (picked) {
+        if (c.ok) { bg = 'rgba(109,179,148,.14)'; border = '1px solid rgba(109,179,148,.4)'; color = '#f0eee8'; mark = '✓'; }
+        else if (picked === c.key) { bg = 'rgba(232,107,107,.12)'; border = '1px solid rgba(232,107,107,.35)'; color = '#f0eee8'; mark = '✕'; }
+      }
+      return { ...c, bg, border, color, mark, onClick: () => this.setState({ picked: c.key }) };
+    });
+
+    const wave = React.createElement('div', { style: { display: 'flex', alignItems: 'flex-end', gap: 4, height: 36 } },
+      [0.0, 0.18, 0.36, 0.09, 0.5, 0.27, 0.42, 0.12, 0.33, 0.05, 0.22, 0.45].map((d, i) =>
+        React.createElement('div', {
+          key: i,
+          style: {
+            width: 4, borderRadius: 9999, background: i % 3 === 0 ? '#9b7fe8' : 'rgba(155,127,232,.45)',
+            animation: this.state.listening ? `bar 1.1s ${d}s cubic-bezier(.4,0,.2,1) infinite` : 'none',
+            height: this.state.listening ? '30%' : '14%',
+          },
+        })));
+
+    const orb = React.createElement('div', { style: { position: 'relative', width: 220, height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+      React.createElement('div', { style: { position: 'absolute', width: 200, height: 200, borderRadius: 9999, border: '1px solid rgba(155,127,232,.35)', animation: this.state.listening ? 'ringOut 3.2s cubic-bezier(.4,0,.2,1) infinite' : 'none' } }),
+      React.createElement('div', { style: { position: 'absolute', width: 200, height: 200, borderRadius: 9999, border: '1px solid rgba(232,169,69,.22)', animation: this.state.listening ? 'ringOut 3.2s 1.6s cubic-bezier(.4,0,.2,1) infinite' : 'none' } }),
+      React.createElement('div', {
+        style: {
+          width: 132, height: 132, borderRadius: 9999,
+          background: 'radial-gradient(circle at 32% 28%, #d3c6f8, #9b7fe8 42%, #6b4fc4 78%, #3d2c78)',
+          boxShadow: '0 0 60px rgba(155,127,232,.45), inset 0 2px 12px rgba(255,255,255,.25)',
+          animation: this.state.listening ? 'orbPulse 3s cubic-bezier(.4,0,.2,1) infinite' : 'none',
+        },
+      }));
+
+    return {
+      nav, subs, subTitle, modes, choices, orb, wave,
+      isOverview: tab === 'overview', isBuilder: tab === 'builder', isLearning: tab === 'learning',
+      isTesting: tab === 'testing', isSearch: tab === 'search', isMentor: tab === 'mentor',
+      isDrop: this.state.sub === 'drop', isGenerate: this.state.sub === 'generate', isBrowse: this.state.sub === 'browse',
+      isFlash: this.state.test === 'flash', isMcq: this.state.test === 'mcq', isTutor: this.state.test === 'tutor',
+      answered: !!picked,
+      nextQ: () => this.setState({ picked: null }),
+      goMentor: this.go('mentor'),
+      flip: () => this.setState(s => ({ flipped: !s.flipped })),
+      cardSide: this.state.flipped ? 'Answer' : 'Prompt',
+      cardText: this.state.flipped
+        ? 'Because attention is permutation-invariant — order must be injected into the embeddings.'
+        : 'Why does a transformer need positional information at all?',
+      cardHint: this.state.flipped ? 'Rate your recall below' : 'Click the card to reveal',
+      statusLabel: this.state.listening ? 'Listening — speak naturally, interrupt any time' : 'Paused · tap to resume',
+      listenLabel: this.state.listening ? 'Pause session' : 'Resume session',
+      listenBg: this.state.listening ? 'rgba(255,255,255,.06)' : accent,
+      listenColor: this.state.listening ? '#f0eee8' : '#0d0d0f',
+      listenShadow: this.state.listening ? 'inset 0 0 0 1px rgba(255,255,255,.16)' : '0 0 28px rgba(232,169,69,.35)',
+      toggleListen: () => this.setState(s => ({ listening: !s.listening })),
+    };
+  }
+}
+</script>
+</body>
+</html>

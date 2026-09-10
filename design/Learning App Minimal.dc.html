@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#faf9f7;color:#16151a;font-family:'Inter',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#3f7a5f;text-decoration:none}
+a:hover{color:#356b52}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.09);border-radius:9999px}
+::-webkit-scrollbar-track{background:transparent}
+@keyframes orbPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.06);opacity:1}}
+@keyframes ringOut{0%{transform:scale(.85);opacity:.5}100%{transform:scale(1.5);opacity:0}}
+@keyframes bar{0%,100%{height:14%}50%{height:88%}}
+@keyframes drift{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-18px,-24px,0)}}
+</style>
+</helmet>
+<div style="display:flex;height:100vh;width:100%;overflow:hidden;background:#faf9f7;position:relative">
+
+<div style="position:absolute;inset:0;pointer-events:none;background:none"></div>
+
+<aside style="width:250px;flex:none;height:100%;display:flex;flex-direction:column;background:#f3f2ef;border-right:1px solid rgba(0,0,0,.06);position:relative;z-index:2">
+  <div style="padding:22px 20px 18px;display:flex;align-items:center;gap:10px">
+    <div style="width:30px;height:30px;border-radius:10px;background:#16151a;display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#faf9f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 6.1L20.5 11l-6.3 1.9L12 19l-2.2-6.1L3.5 11l6.3-1.9z"></path></svg>
+    </div>
+    <div>
+      <div style="font-family:'Inter',-apple-system,sans-serif;font-size:16px;font-weight:600;letter-spacing:-.02em;line-height:1">Lumina Learn</div>
+      <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6f6c66;margin-top:3px">Study workspace</div>
+    </div>
+  </div>
+
+  <nav style="flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 12px 12px;display:flex;flex-direction:column;gap:2px">
+    <sc-for list="{{ nav }}" as="item" hint-placeholder-count="6">
+      <div style="display:flex;flex-direction:column">
+        <button onClick="{{ item.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;transition:background 200ms cubic-bezier(.16,1,.3,1),color 200ms" style-hover="background:#ffffff" background="{{ item.bg }}" color="{{ item.color }}">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;opacity:.95"><path d="{{ item.icon }}"></path></svg>
+          <span style="flex:1;text-align:left">{{ item.label }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6f6c66">{{ item.meta }}</span>
+        </button>
+        <sc-if value="{{ item.showSubs }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:1px;margin:3px 0 6px 22px;padding-left:12px;border-left:1px solid rgba(0,0,0,.09)">
+            <sc-for list="{{ subs }}" as="sub" hint-placeholder-count="3">
+              <button onClick="{{ sub.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:7px 10px;border-radius:10px;font-family:'Inter',sans-serif;font-size:12.5px;transition:color 200ms" style-hover="color:#16151a" color="{{ sub.color }}" background="{{ sub.bg }}">{{ sub.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </nav>
+
+  <div style="margin:0 12px 14px;padding:13px;border-radius:12px;background:rgba(63,122,95,.07);border:1px solid rgba(63,122,95,.16)">
+    <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#2f6b50;margin-bottom:6px">Study streak</div>
+    <div style="display:flex;align-items:baseline;gap:6px"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;color:#16151a">12</span><span style="font-size:12px;color:#6b6862">days · 4h this week</span></div>
+    <div style="display:flex;gap:3px;margin-top:9px">
+      <div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:rgba(0,0,0,.1)"></div><div style="flex:1;height:5px;border-radius:9999px;background:rgba(0,0,0,.1)"></div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid rgba(0,0,0,.06)">
+    <div style="width:28px;height:28px;border-radius:9999px;background:#16151a;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff">NR</div>
+    <div style="flex:1"><div style="font-size:12.5px;font-weight:500">Nadia Rahman</div><div style="font-size:10.5px;color:#6f6c66">Pro · 3 courses</div></div>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6f6c66" stroke-width="1.6" stroke-linecap="round"><path d="M12 8v.01M12 12v.01M12 16v.01"></path></svg>
+  </div>
+</aside>
+
+<main style="flex:1;min-width:0;height:100%;position:relative;z-index:1;overflow:hidden">
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div style="height:100%;min-height:0;overflow-y:auto;display:flex;flex-direction:column;padding:30px 2.9%;gap:20px">
+  <div style="flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f6c66;margin-bottom:5px">Wednesday, 9 September</div>
+      <div style="font-family:'Inter',-apple-system,sans-serif;font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.1">Good evening, Nadia</div>
+    </div>
+    <div style="display:flex;gap:9px;align-items:center">
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 15px;border-radius:10px;background:#ffffff;border:1px solid rgba(0,0,0,.11);font-size:12.5px;font-weight:500;color:#16151a" style-hover="border-color:rgba(63,122,95,.6);color:#3f7a5f">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21"></path></svg>Ask the search agent</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:7px;padding:10px 17px;border-radius:10px;background:#3f7a5f;color:#ffffff;font-size:12.5px;font-weight:600" style-hover="background:#356b52">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>New course</button>
+    </div>
+  </div>
+
+  <section style="flex:25 0 auto;min-height:148px;display:flex;flex-direction:column;gap:9px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">This week at a glance</span><span style="font-size:11px;color:#6f6c66">Last 7 days</span></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px">
+      <div style="min-width:0;padding:14px 16px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.16)">
+        <div style="font-size:11.5px;color:#6b6862">Retention score</div>
+        <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:500;color:#3f7a5f">84%</span><span style="font-size:11.5px;color:#3f7a5f">+6</span></div>
+        <div style="height:4px;border-radius:9999px;background:rgba(0,0,0,.08);overflow:hidden"><div style="width:84%;height:100%;background:#3f7a5f"></div></div>
+      </div>
+      <div style="min-width:0;padding:14px 16px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.16)">
+        <div style="font-size:11.5px;color:#6b6862">Cards reviewed</div>
+        <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:500">312</span><span style="font-size:11.5px;color:#6b6862">of 400</span></div>
+        <div style="display:flex;gap:3px;align-items:flex-end;height:22px">
+          <div style="flex:1;height:40%;background:rgba(63,122,95,.5);border-radius:2px"></div><div style="flex:1;height:65%;background:rgba(63,122,95,.5);border-radius:2px"></div><div style="flex:1;height:35%;background:rgba(63,122,95,.5);border-radius:2px"></div><div style="flex:1;height:80%;background:#3f7a5f;border-radius:2px"></div><div style="flex:1;height:55%;background:rgba(63,122,95,.5);border-radius:2px"></div><div style="flex:1;height:95%;background:#3f7a5f;border-radius:2px"></div><div style="flex:1;height:70%;background:rgba(63,122,95,.5);border-radius:2px"></div>
+        </div>
+      </div>
+      <div style="min-width:0;padding:14px 16px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.16)">
+        <div style="font-size:11.5px;color:#6b6862">Weak spots</div>
+        <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:500">3</span><span style="font-size:11.5px;color:#6b6862">topics</span></div>
+        <div style="font-size:11px;color:#4a4843;line-height:1.4;overflow:hidden">Backpropagation · Bayes rule · Attention masks</div>
+      </div>
+      <div style="min-width:0;padding:14px 16px;border-radius:14px;background:rgba(63,122,95,.07);border:1px solid rgba(63,122,95,.2);display:flex;flex-direction:column;justify-content:space-between;transition:border-color 200ms" style-hover="border-color:rgba(63,122,95,.45)">
+        <div style="font-size:11.5px;color:#2f6b50">Next best action</div>
+        <div style="font-size:14px;font-weight:500;line-height:1.35;color:#16151a">Review 18 due cards in Deep Learning</div>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;font-size:11.5px;font-weight:600;color:#3f7a5f;letter-spacing:.02em" style-hover="color:#356b52">Start 6-min session →</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="flex:40 0 auto;min-height:212px;display:flex;flex-direction:column;gap:9px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Recently accessed</span><a href="#" style="font-size:11.5px;color:#6b6862" style-hover="color:#3f7a5f">View all activity</a></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+      <div style="min-width:0;padding:15px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color 200ms,transform 200ms cubic-bezier(.16,1,.3,1)" style-hover="border-color:rgba(0,0,0,.16);transform:translateY(-2px)">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:rgba(63,122,95,.14);color:#2f6b50">Notes</span><span style="font-size:10.5px;color:#6f6c66">14m ago</span></div>
+        <div style="flex:1;min-height:0"><div style="font-size:14.5px;font-weight:500;line-height:1.35">Transformers — attention &amp; positional encoding</div><div style="font-size:12px;color:#6b6862;margin-top:6px;line-height:1.5">Chapter 4 of 9 · generated from 2 PDFs</div></div>
+        <div style="display:flex;align-items:center;gap:9px"><div style="flex:1;height:4px;border-radius:9999px;background:rgba(0,0,0,.08);overflow:hidden"><div style="width:62%;height:100%;background:#3f7a5f"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6862">62%</span></div>
+      </div>
+      <div style="min-width:0;padding:15px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color 200ms,transform 200ms cubic-bezier(.16,1,.3,1)" style-hover="border-color:rgba(0,0,0,.16);transform:translateY(-2px)">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:rgba(63,122,95,.14);color:#2f6b50">Flashcards</span><span style="font-size:10.5px;color:#6f6c66">Yesterday</span></div>
+        <div style="flex:1;min-height:0"><div style="font-size:14.5px;font-weight:500;line-height:1.35">Probability foundations deck</div><div style="font-size:12px;color:#6b6862;margin-top:6px;line-height:1.5">96 cards · 18 due today</div></div>
+        <div style="display:flex;align-items:center;gap:9px"><div style="flex:1;height:4px;border-radius:9999px;background:rgba(0,0,0,.08);overflow:hidden"><div style="width:81%;height:100%;background:#3f7a5f"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6862">81%</span></div>
+      </div>
+      <div style="min-width:0;padding:15px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color 200ms,transform 200ms cubic-bezier(.16,1,.3,1)" style-hover="border-color:rgba(0,0,0,.16);transform:translateY(-2px)">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:rgba(63,122,95,.14);color:#2f6b50">Mentor</span><span style="font-size:10.5px;color:#6f6c66">2 days ago</span></div>
+        <div style="flex:1;min-height:0"><div style="font-size:14.5px;font-weight:500;line-height:1.35">Voice session — gradient descent intuition</div><div style="font-size:12px;color:#6b6862;margin-top:6px;line-height:1.5">21 min · transcript &amp; summary saved</div></div>
+        <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#2f6b50"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg>Follow-ups answered</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="flex:40 0 auto;min-height:144px;display:flex;flex-direction:column;gap:9px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Favorites</span><a href="#" style="font-size:11.5px;color:#6b6862" style-hover="color:#3f7a5f">Manage</a></div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px">
+      <div style="min-width:0;padding:13px;border-radius:14px;background:#ffffff;border:1px solid rgba(63,122,95,.18);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(63,122,95,.5)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2f6b50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z"></path></svg>
+        <div><div style="font-size:14px;font-weight:500;line-height:1.3">Deep Learning</div><div style="font-size:11px;color:#6b6862;margin-top:4px">9 chapters · 240 cards</div></div>
+      </div>
+      <div style="min-width:0;padding:13px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.16)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h10l6 6v10H4zM14 4v6h6"></path></svg>
+        <div><div style="font-size:14px;font-weight:500;line-height:1.3">Linear Algebra Refresher</div><div style="font-size:11px;color:#6b6862;margin-top:4px">Built from lecture PDF</div></div>
+      </div>
+      <div style="min-width:0;padding:13px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.16)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2f6b50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21"></path></svg>
+        <div><div style="font-size:14px;font-weight:500;line-height:1.3">Saved research: RLHF papers</div><div style="font-size:11px;color:#6b6862;margin-top:4px">11 sources from Exa</div></div>
+      </div>
+      <div style="min-width:0;padding:13px;border-radius:14px;background:rgba(0,0,0,.015);border:1px dashed rgba(0,0,0,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:#6f6c66;transition:color 200ms,border-color 200ms" style-hover="color:#3f7a5f;border-color:rgba(63,122,95,.4)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        <span style="font-size:12px">Pin a course or deck</span>
+      </div>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBuilder }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;padding:30px 2.9%;gap:26px;overflow-y:auto">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f6c66;margin-bottom:5px">Course Builder</div>
+      <div style="font-family:'Inter',-apple-system,sans-serif;font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.1">{{ subTitle }}</div>
+    </div>
+    <div style="display:flex;gap:6px;padding:5px;border-radius:12px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035)">
+      <sc-for list="{{ subs }}" as="sub" hint-placeholder-count="3">
+        <button onClick="{{ sub.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:8px 14px;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;transition:all 200ms" background="{{ sub.pillBg }}" color="{{ sub.pillColor }}">{{ sub.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ isDrop }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:26px">
+    <div style="border-radius:18px;border:1.5px dashed rgba(63,122,95,.35);background:rgba(63,122,95,.05);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center;min-height:320px">
+      <div style="width:56px;height:56px;border-radius:14px;background:rgba(63,122,95,.14);display:flex;align-items:center;justify-content:center">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L8 8m4-4l4 4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"></path></svg>
+      </div>
+      <div style="font-size:20px;font-weight:500">Drop a PDF, slide deck, or paste text</div>
+      <div style="font-size:13px;color:#6b6862;max-width:400px;line-height:1.6">We read the structure first — headings, figures, and definitions — then propose a chapter outline before generating anything.</div>
+      <div style="display:flex;gap:9px;margin-top:4px">
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:10px;background:#3f7a5f;color:#ffffff;font-size:12.5px;font-weight:600" style-hover="background:#356b52">Choose files</button>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:10px;background:#ffffff;border:1px solid rgba(0,0,0,.11);font-size:12.5px;font-weight:500;color:#16151a" style-hover="border-color:rgba(0,0,0,.28)">Paste text instead</button>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6f6c66;margin-top:2px">PDF · DOCX · PPTX · MD · TXT · up to 80 MB</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">In this upload</div>
+      <div style="padding:15px;border-radius:12px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;gap:12px;align-items:center">
+        <div style="width:34px;height:34px;flex:none;border-radius:10px;background:rgba(63,122,95,.14);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#3f7a5f">PDF</div>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">CS231n_lecture_notes.pdf</div><div style="font-size:11px;color:#6b6862;margin-top:2px">184 pages · parsed</div></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.8" stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg>
+      </div>
+      <div style="padding:15px;border-radius:12px;background:#ffffff;border:1px solid rgba(63,122,95,.2);display:flex;gap:12px;align-items:center">
+        <div style="width:34px;height:34px;flex:none;border-radius:10px;background:rgba(63,122,95,.16);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#2f6b50">TXT</div>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500">Pasted seminar notes</div><div style="font-size:11px;color:#6b6862;margin-top:2px">Extracting concepts — 68%</div></div>
+        <div style="width:30px;height:4px;border-radius:9999px;background:rgba(0,0,0,.1);overflow:hidden"><div style="width:68%;height:100%;background:#3f7a5f"></div></div>
+      </div>
+      <div style="margin-top:6px;padding:13px;border-radius:12px;background:rgba(63,122,95,.07);border:1px solid rgba(63,122,95,.16)">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#2f6b50;margin-bottom:8px">Proposed outline</div>
+        <div style="display:flex;flex-direction:column;gap:7px;font-size:12.5px;color:#4a4843">
+          <div style="display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6f6c66">01</span>Image classification &amp; kNN</div>
+          <div style="display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6f6c66">02</span>Loss functions and optimisation</div>
+          <div style="display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6f6c66">03</span>Backpropagation, step by step</div>
+          <div style="display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#6f6c66">04</span>Convolutional architectures</div>
+        </div>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:13px;width:100%;text-align:center;padding:11px;border-radius:10px;background:#3f7a5f;color:#ffffff;font-size:12.5px;font-weight:600" style-hover="background:#2f6b50">Build course from outline</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isGenerate }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px">
+    <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+      <div style="padding:15px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035)">
+        <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862;margin-bottom:10px">What should this course teach?</div>
+        <div style="padding:14px;border-radius:12px;background:#ffffff;border:1px solid rgba(63,122,95,.45);font-size:14px;line-height:1.6;color:#16151a;min-height:104px;box-shadow:0 0 0 3px rgba(63,122,95,.1)">A practical course on evaluating LLM agents — benchmarks, failure modes, and how to design a rubric for my own team.<span style="display:inline-block;width:1.5px;height:16px;background:#3f7a5f;vertical-align:-3px;margin-left:2px"></span></div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(63,122,95,.12);color:#2f6b50;border:1px solid rgba(63,122,95,.2)">Intermediate</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:#ffffff;color:#4a4843;border:1px solid rgba(0,0,0,.1)">6 chapters</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:#ffffff;color:#4a4843;border:1px solid rgba(0,0,0,.1)">Cite sources</span>
+        </div>
+      </div>
+      <div style="padding:15px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Research sources</div>
+        <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:19px;border-radius:9999px;background:#3f7a5f;padding:2px;display:flex;justify-content:flex-end"><div style="width:15px;height:15px;border-radius:9999px;background:#faf9f7"></div></div><span style="font-size:13px;flex:1">Exa web search</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66">24 pages</span></div>
+        <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:19px;border-radius:9999px;background:#3f7a5f;padding:2px;display:flex;justify-content:flex-end"><div style="width:15px;height:15px;border-radius:9999px;background:#faf9f7"></div></div><span style="font-size:13px;flex:1">arXiv &amp; papers</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66">9 papers</span></div>
+        <div style="display:flex;align-items:center;gap:11px"><div style="width:34px;height:19px;border-radius:9999px;background:rgba(0,0,0,.11);padding:2px;display:flex"><div style="width:15px;height:15px;border-radius:9999px;background:#6f6c66"></div></div><span style="font-size:13px;flex:1;color:#6b6862">My uploaded library</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66">off</span></div>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:4px;text-align:center;padding:13px;border-radius:12px;background:#3f7a5f;color:#ffffff;font-size:13px;font-weight:600" style-hover="background:#356b52">Generate + research</button>
+      </div>
+    </div>
+    <div style="min-width:0;padding:13px;border-radius:14px;background:rgba(63,122,95,.06);border:1px solid rgba(63,122,95,.16);display:flex;flex-direction:column;gap:20px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="width:8px;height:8px;border-radius:9999px;background:#3f7a5f"></div>
+        <span style="font-size:12.5px;font-weight:500;color:#27523e">Researching — step 3 of 5</span>
+        <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:#6b6862">00:42</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px;font-size:12.5px;line-height:1.55">
+        <div style="display:flex;gap:10px;color:#6b6862"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.8" stroke-linecap="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Framed 6 chapters around eval lifecycle</div>
+        <div style="display:flex;gap:10px;color:#6b6862"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.8" stroke-linecap="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Pulled 24 sources, dropped 7 low-signal</div>
+        <div style="display:flex;gap:10px;color:#16151a"><span style="width:15px;flex:none;text-align:center;color:#3f7a5f">•</span>Drafting Chapter 3 — "Designing a rubric"</div>
+        <div style="display:flex;gap:10px;color:#6f6c66"><span style="width:15px;flex:none;text-align:center">•</span>Generate 40 flashcards + 20 MCQs</div>
+        <div style="display:flex;gap:10px;color:#6f6c66"><span style="width:15px;flex:none;text-align:center">•</span>Cross-link to Deep Learning course</div>
+      </div>
+      <div style="margin-top:auto;padding:15px;border-radius:12px;background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.06)">
+        <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862;margin-bottom:9px">Top sources so far</div>
+        <div style="display:flex;flex-direction:column;gap:9px;font-size:12px">
+          <div style="display:flex;gap:9px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#3f7a5f">01</span><span style="flex:1;color:#4a4843">Holistic Evaluation of Language Models</span><span style="font-size:10.5px;color:#6f6c66">arXiv</span></div>
+          <div style="display:flex;gap:9px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#3f7a5f">02</span><span style="flex:1;color:#4a4843">Agent benchmarks are broken — and how to fix them</span><span style="font-size:10.5px;color:#6f6c66">blog</span></div>
+          <div style="display:flex;gap:9px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#3f7a5f">03</span><span style="flex:1;color:#4a4843">Rubric design for human graders</span><span style="font-size:10.5px;color:#6f6c66">paper</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isBrowse }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;background:#ffffff;border:1px solid rgba(0,0,0,.07)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6f6c66" stroke-width="1.6" stroke-linecap="round"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21"></path></svg>
+        <span style="font-size:13px;color:#6f6c66">Search 148 materials…</span>
+      </div>
+      <span style="font-size:12px;padding:9px 14px;border-radius:9999px;background:rgba(63,122,95,.12);color:#2f6b50;border:1px solid rgba(63,122,95,.22)">All</span>
+      <span style="font-size:12px;padding:9px 14px;border-radius:9999px;background:#ffffff;color:#4a4843;border:1px solid rgba(0,0,0,.1)">PDFs</span>
+      <span style="font-size:12px;padding:9px 14px;border-radius:9999px;background:#ffffff;color:#4a4843;border:1px solid rgba(0,0,0,.1)">Web sources</span>
+      <span style="font-size:12px;padding:9px 14px;border-radius:9999px;background:#ffffff;color:#4a4843;border:1px solid rgba(0,0,0,.1)">Generated notes</span>
+    </div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));grid-auto-rows:132px;gap:20px;overflow-y:auto;padding-right:4px">
+      <div style="padding:13px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#3f7a5f">PDF · 184p</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">CS231n lecture notes</div><div style="font-size:11px;color:#6f6c66;margin-top:5px">Used in 2 courses</div></div></div>
+      <div style="padding:13px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#2f6b50">NOTES · 9 ch</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">Transformers, distilled</div><div style="font-size:11px;color:#6f6c66;margin-top:5px">Generated 3 days ago</div></div></div>
+      <div style="padding:13px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#2f6b50">WEB · 11 src</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">RLHF reading list</div><div style="font-size:11px;color:#6f6c66;margin-top:5px">Collected by search agent</div></div></div>
+      <div style="padding:13px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#3f7a5f">SLIDES · 62</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">Optimisation seminar deck</div><div style="font-size:11px;color:#6f6c66;margin-top:5px">Not yet used</div></div></div>
+      <div style="padding:13px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#2f6b50">NOTES · 4 ch</div><div><div style="font-size:14px;font-weight:500;line-height:1.35">Probability foundations</div><div style="font-size:11px;color:#6f6c66;margin-top:5px">96 cards linked</div></div></div>
+      <div style="padding:13px;border-radius:14px;background:rgba(0,0,0,.015);border:1px dashed rgba(0,0,0,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#6f6c66;cursor:pointer;transition:color 200ms,border-color 200ms" style-hover="color:#3f7a5f;border-color:rgba(63,122,95,.4)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg><span style="font-size:12px">Add material</span></div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLearning }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;overflow:hidden">
+  <div style="width:236px;flex:none;height:100%;padding:30px 20px;border-right:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;gap:20px;overflow-y:auto">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f6c66">Course</div>
+      <div style="font-size:15px;font-weight:500;margin-top:6px;line-height:1.35">Transformers, distilled</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:9px"><div style="flex:1;height:4px;border-radius:9999px;background:rgba(0,0,0,.08);overflow:hidden"><div style="width:62%;height:100%;background:#3f7a5f"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6862">62%</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="padding:8px 10px;border-radius:10px;font-size:12.5px;color:#6b6862;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#3f7a5f">✓</span>Sequence models before attention</div>
+      <div style="padding:8px 10px;border-radius:10px;font-size:12.5px;color:#6b6862;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#3f7a5f">✓</span>Self-attention from scratch</div>
+      <div style="padding:8px 10px;border-radius:10px;font-size:12.5px;color:#6b6862;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#3f7a5f">✓</span>Multi-head attention</div>
+      <div style="padding:8px 10px;border-radius:10px;background:rgba(63,122,95,.14);font-size:12.5px;color:#16151a;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace;color:#3f7a5f">04</span>Positional encoding</div>
+      <div style="padding:8px 10px;border-radius:10px;font-size:12.5px;color:#6f6c66;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace">05</span>Encoder–decoder stacks</div>
+      <div style="padding:8px 10px;border-radius:10px;font-size:12.5px;color:#6f6c66;display:flex;gap:9px"><span style="font-family:'JetBrains Mono',monospace">06</span>Training tricks &amp; scaling</div>
+    </div>
+    <div style="margin-top:auto;padding:13px;border-radius:12px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035)">
+      <div style="font-size:11.5px;color:#6b6862;line-height:1.5">Notes preview — generated from your uploads. Edits sync to cards.</div>
+    </div>
+  </div>
+  <div style="flex:1;min-width:0;height:100%;overflow-y:auto;padding:30px 5%">
+    <div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:26px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border-radius:6px;background:rgba(63,122,95,.14);color:#2f6b50">Chapter 04</span>
+        <span style="font-size:11.5px;color:#6f6c66">8 min read · 12 cards · 4 sources</span>
+        <div style="margin-left:auto;display:flex;gap:7px">
+          <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:8px 13px;border-radius:10px;background:#ffffff;border:1px solid rgba(0,0,0,.11);font-size:11.5px;font-weight:500;color:#16151a" style-hover="border-color:rgba(0,0,0,.28)">Simplify</button>
+          <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:8px 13px;border-radius:10px;background:rgba(63,122,95,.14);border:1px solid rgba(63,122,95,.28);font-size:11.5px;font-weight:600;color:#3f7a5f" style-hover="background:rgba(63,122,95,.22)">Test me on this</button>
+        </div>
+      </div>
+      <h2 style="font-family:'Inter',-apple-system,sans-serif;font-size:28px;font-weight:600;letter-spacing:-.03em;letter-spacing:-.02em;line-height:1.15;margin:0">Positional encoding</h2>
+      <p style="font-size:16px;line-height:1.7;color:#4a4843;margin:0">Attention is permutation-invariant: shuffle the tokens and the maths gives you the same answer. Position has to be <em style="color:#16151a;font-style:normal;background:rgba(63,122,95,.16);padding:1px 4px;border-radius:4px">injected into the embeddings</em> rather than inferred from the operation itself.</p>
+      <div style="padding:15px 20px;border-radius:14px;background:rgba(63,122,95,.07);border:1px solid rgba(63,122,95,.18);display:flex;gap:20px">
+        <div style="width:26px;height:26px;flex:none;border-radius:9999px;background:#16151a;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="6"></circle></svg></div>
+        <div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#2f6b50;margin-bottom:6px">Why it matters</div><div style="font-size:14.5px;line-height:1.65;color:#16151a">Sinusoidal encodings let a model extrapolate to sequence lengths it never saw in training — learned embeddings usually cannot.</div></div>
+      </div>
+      <h3 style="font-size:19px;font-weight:600;margin:6px 0 0">The sinusoidal formulation</h3>
+      <div style="padding:13px;border-radius:12px;background:#f3f2ef;border:1px solid rgba(0,0,0,.06);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9;color:#4a4843">PE(pos, 2i)&nbsp;&nbsp;= sin(pos / 10000^(2i/d))<br>PE(pos, 2i+1) = cos(pos / 10000^(2i/d))</div>
+      <p style="font-size:16px;line-height:1.7;color:#4a4843;margin:0">Each dimension traces a sinusoid of a different wavelength, so relative offsets become linear functions of the encoding — the property that makes attention able to reason about "three tokens back".</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;padding:13px;border-radius:12px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.06)">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862;width:100%">Sourced from</div>
+        <span style="font-size:12px;padding:6px 11px;border-radius:9999px;background:#ffffff;color:#4a4843;border:1px solid rgba(0,0,0,.1)">Attention Is All You Need · §3.5</span>
+        <span style="font-size:12px;padding:6px 11px;border-radius:9999px;background:#ffffff;color:#4a4843;border:1px solid rgba(0,0,0,.1)">CS231n notes · p.142</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;padding:14px 16px;border-radius:12px;background:#ffffff;border:1px solid rgba(0,0,0,.07);margin-bottom:20px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.6" stroke-linecap="round"><path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3"></path></svg>
+        <span style="font-size:13px;color:#6b6862;flex:1">Confused by a passage? Highlight it and ask the mentor out loud.</span>
+        <button onClick="{{ goMentor }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:9px 15px;border-radius:10px;background:rgba(63,122,95,.16);border:1px solid rgba(63,122,95,.3);font-size:12px;font-weight:600;color:#2f6b50" style-hover="background:rgba(63,122,95,.28)">Open voice mode</button>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTesting }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;padding:30px 2.9%;gap:20px;overflow-y:auto">
+  <div>
+    <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f6c66;margin-bottom:5px">Testing · Transformers, distilled</div>
+    <div style="font-family:'Inter',-apple-system,sans-serif;font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.1">How do you want to be tested?</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+    <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+      <button onClick="{{ m.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:13px;border-radius:14px;display:flex;flex-direction:column;gap:11px;font-family:'Inter',sans-serif;transition:all 200ms cubic-bezier(.16,1,.3,1)" background="{{ m.bg }}" border="{{ m.border }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" color="{{ m.iconColor }}"><path d="{{ m.icon }}"></path></svg>
+        <div style="font-size:16px;font-weight:500;color:#16151a">{{ m.title }}</div>
+        <div style="font-size:12.5px;line-height:1.55;color:#6b6862">{{ m.desc }}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6f6c66;margin-top:2px">{{ m.meta }}</div>
+      </button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ isFlash }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;letter-spacing:.08em">CARD 7 / 40 · 18 DUE</div>
+    <button onClick="{{ flip }}" style="all:unset;box-sizing:border-box;cursor:pointer;width:min(560px,100%);min-height:220px;padding:28px;border-radius:18px;background:#ffffff;border:1px solid rgba(0,0,0,.12);box-shadow:0 1px 2px rgba(0,0,0,.04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;font-family:'Inter',sans-serif">
+      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">{{ cardSide }}</div>
+      <div style="font-size:21px;line-height:1.45;font-weight:400;color:#16151a">{{ cardText }}</div>
+      <div style="font-size:11.5px;color:#6f6c66">{{ cardHint }}</div>
+    </button>
+    <div style="display:flex;gap:10px">
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:10px;background:rgba(184,71,74,.12);border:1px solid rgba(184,71,74,.28);font-size:12.5px;font-weight:600;color:#b8474a" style-hover="background:rgba(184,71,74,.2)">Again</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:10px;background:#ffffff;border:1px solid rgba(0,0,0,.11);font-size:12.5px;font-weight:500;color:#4a4843" style-hover="border-color:rgba(0,0,0,.28)">Hard</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:10px;background:rgba(63,122,95,.14);border:1px solid rgba(63,122,95,.3);font-size:12.5px;font-weight:600;color:#2f6b50" style-hover="background:rgba(63,122,95,.24)">Good</button>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 20px;border-radius:10px;background:rgba(63,122,95,.14);border:1px solid rgba(63,122,95,.3);font-size:12.5px;font-weight:600;color:#3f7a5f" style-hover="background:rgba(63,122,95,.24)">Easy</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isMcq }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:flex;justify-content:center">
+    <div style="width:min(700px,100%);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex:1;height:4px;border-radius:9999px;background:rgba(0,0,0,.08);overflow:hidden"><div style="width:35%;height:100%;background:#3f7a5f"></div></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6b6862">Q7 / 20</span>
+      </div>
+      <div style="padding:13px;border-radius:18px;background:#ffffff;border:1px solid rgba(0,0,0,.07);display:flex;flex-direction:column;gap:16px">
+        <div style="font-size:17.5px;line-height:1.5;font-weight:500">Why do sinusoidal positional encodings generalise to longer sequences than learned ones?</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ choices }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.onClick }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:13px;align-items:flex-start;padding:15px 17px;border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;transition:all 200ms" background="{{ c.bg }}" border="{{ c.border }}" color="{{ c.color }}">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;flex:none;width:18px;height:18px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:#ffffff;margin-top:1px">{{ c.key }}</span>
+              <span style="flex:1">{{ c.text }}</span>
+              <span style="font-size:12px;flex:none">{{ c.mark }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ answered }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:15px 17px;border-radius:12px;background:rgba(63,122,95,.08);border:1px solid rgba(63,122,95,.2);font-size:13.5px;line-height:1.6;color:#27523e">Relative offsets are a linear function of sinusoidal encodings, so the pattern continues past training lengths. Learned tables simply have no row for position 5,000.</div>
+        </sc-if>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button onClick="{{ nextQ }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:12px 22px;border-radius:10px;background:#3f7a5f;color:#ffffff;font-size:12.5px;font-weight:600" style-hover="background:#356b52">Next question</button>
+          <button onClick="{{ goMentor }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:12px 18px;border-radius:10px;background:#ffffff;border:1px solid rgba(0,0,0,.11);font-size:12.5px;font-weight:500;color:#4a4843" style-hover="border-color:rgba(63,122,95,.5);color:#2f6b50">Explain with AI Tutor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTutor }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;display:flex;justify-content:center">
+    <div style="width:min(700px,100%);padding:13px;border-radius:18px;background:#ffffff;border:1px solid rgba(0,0,0,.07);display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:center;gap:10px"><div style="width:26px;height:26px;border-radius:9999px;background:#16151a"></div><div><div style="font-size:13px;font-weight:600;color:#2f6b50">AI Tutor</div><div style="font-size:11px;color:#6f6c66">Socratic mode · knows your last 3 wrong answers</div></div></div>
+      <div style="align-self:flex-start;max-width:80%;padding:13px 16px;border-radius:14px;border-bottom-left-radius:4px;background:rgba(63,122,95,.09);border:1px solid rgba(63,122,95,.16);font-size:14px;line-height:1.6;color:#16151a">You missed two questions on positional encoding. Before I explain — what happens to attention scores if I reverse the token order?</div>
+      <div style="align-self:flex-end;max-width:78%;padding:13px 16px;border-radius:14px;border-bottom-right-radius:4px;background:#3f7a5f;color:#ffffff;font-size:14px;font-weight:500;line-height:1.6">Nothing? The scores are the same set.</div>
+      <div style="align-self:flex-start;max-width:80%;padding:13px 16px;border-radius:14px;border-bottom-left-radius:4px;background:rgba(63,122,95,.09);border:1px solid rgba(63,122,95,.16);font-size:14px;line-height:1.6;color:#16151a">Exactly — and that's the whole problem. So where must order information come from?</div>
+      <div style="margin-top:auto;display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;background:#faf9f7;border:1px solid rgba(63,122,95,.35)">
+        <span style="flex:1;font-size:13.5px;color:#6f6c66">Type your answer…</span>
+        <button onClick="{{ goMentor }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#2f6b50" style-hover="color:#27523e"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3"></path></svg>Voice</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;padding:30px 2.9%;gap:26px;overflow-y:auto">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+    <div>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f6c66">Search agent</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 7px;border-radius:6px;background:rgba(63,122,95,.14);color:#2f6b50">EXA · LIVE</span></div>
+      <div style="font-family:'Inter',-apple-system,sans-serif;font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.1">Find the best sources, not the most</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:11px;align-items:center;padding:13px 16px;border-radius:14px;background:#ffffff;border:1px solid rgba(63,122,95,.35);box-shadow:0 0 0 3px rgba(63,122,95,.1)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.6" stroke-linecap="round"><path d="M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21"></path></svg>
+    <span style="flex:1;font-size:15px;color:#16151a">best practical explanations of rotary positional embeddings</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6f6c66">neural search</span>
+    <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:9px 16px;border-radius:10px;background:#3f7a5f;color:#ffffff;font-size:12px;font-weight:600" style-hover="background:#2f6b50">Search</button>
+  </div>
+  <div style="display:flex;gap:26px;flex:1;min-height:0;align-items:flex-start;flex-wrap:wrap">
+    <div style="flex:1;min-width:320px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">14 results · ranked by relevance</span><span style="font-size:11.5px;color:#6f6c66">Select to add to a course</span></div>
+      <div style="padding:15px 17px;border-radius:14px;background:rgba(63,122,95,.06);border:1px solid rgba(63,122,95,.22);display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;align-items:center;gap:9px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#3f7a5f">01</span><span style="font-size:15px;font-weight:500;flex:1">RoFormer: Rotary Position Embedding</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#2f6b50">0.94</span></div>
+        <div style="font-size:12.5px;line-height:1.6;color:#4a4843">The original derivation — rotates query and key vectors so the dot product encodes relative distance. Dense, but the section-3 walkthrough is the clearest primary source.</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:11px;padding:4px 9px;border-radius:6px;background:rgba(0,0,0,.04);color:#6b6862">arxiv.org</span><span style="font-size:11px;color:#6f6c66">2021 · cited 1.2k</span><button style="all:unset;box-sizing:border-box;cursor:pointer;margin-left:auto;font-size:11.5px;font-weight:600;color:#3f7a5f" style-hover="color:#356b52">+ Add to course</button></div>
+      </div>
+      <div style="padding:15px 17px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;gap:9px;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)">
+        <div style="display:flex;align-items:center;gap:9px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#3f7a5f">02</span><span style="font-size:15px;font-weight:500;flex:1">Rotary embeddings, visually</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6862">0.91</span></div>
+        <div style="font-size:12.5px;line-height:1.6;color:#4a4843">Animated 2D rotations with an interactive slider — the fastest intuition build if you skip the proofs.</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:11px;padding:4px 9px;border-radius:6px;background:rgba(0,0,0,.04);color:#6b6862">blog</span><span style="font-size:11px;color:#6f6c66">9 min read</span><button style="all:unset;box-sizing:border-box;cursor:pointer;margin-left:auto;font-size:11.5px;font-weight:600;color:#6b6862" style-hover="color:#3f7a5f">+ Add to course</button></div>
+      </div>
+      <div style="padding:15px 17px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;gap:9px;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)">
+        <div style="display:flex;align-items:center;gap:9px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#3f7a5f">03</span><span style="font-size:15px;font-weight:500;flex:1">Extending context: RoPE scaling in practice</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6862">0.88</span></div>
+        <div style="font-size:12.5px;line-height:1.6;color:#4a4843">Engineering notes on interpolation vs. NTK scaling, with benchmark tables you can lift into a chapter.</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:11px;padding:4px 9px;border-radius:6px;background:rgba(0,0,0,.04);color:#6b6862">engineering blog</span><span style="font-size:11px;color:#6f6c66">2024</span><button style="all:unset;box-sizing:border-box;cursor:pointer;margin-left:auto;font-size:11.5px;font-weight:600;color:#6b6862" style-hover="color:#3f7a5f">+ Add to course</button></div>
+      </div>
+    </div>
+    <div style="width:300px;flex:none;display:flex;flex-direction:column;gap:12px">
+      <div style="padding:15px;border-radius:14px;background:rgba(63,122,95,.07);border:1px solid rgba(63,122,95,.18)">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#2f6b50;margin-bottom:9px">Agent summary</div>
+        <div style="font-size:13px;line-height:1.65;color:#16151a">Three sources cover this well: read the visual explainer first, then §3 of RoFormer, then the scaling notes. Skip the six tutorial reposts — they paraphrase the paper without adding intuition.</div>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:13px;width:100%;text-align:center;padding:11px;border-radius:10px;background:#3f7a5f;color:#ffffff;font-size:12.5px;font-weight:600" style-hover="background:#2f6b50">Turn 3 sources into a chapter</button>
+      </div>
+      <div style="padding:15px;border-radius:14px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Filters</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(63,122,95,.12);color:#2f6b50;border:1px solid rgba(63,122,95,.22)">Papers</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:rgba(63,122,95,.12);color:#2f6b50;border:1px solid rgba(63,122,95,.22)">Explainers</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:#ffffff;color:#6b6862;border:1px solid rgba(0,0,0,.1)">Video</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:#ffffff;color:#6b6862;border:1px solid rgba(0,0,0,.1)">Forums</span>
+          <span style="font-size:11.5px;padding:6px 11px;border-radius:9999px;background:#ffffff;color:#6b6862;border:1px solid rgba(0,0,0,.1)">Last 2 years</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMentor }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:30px 2.9%;position:relative;overflow:hidden">
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(560px 560px at 50% 44%,rgba(0,0,0,.035),transparent 70%)"></div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f6c66">AI Mentor · voice mode</div>
+    <div style="font-size:14px;color:#6b6862">{{ statusLabel }}</div>
+  </div>
+  <div style="position:relative;z-index:1;width:220px;height:220px;display:flex;align-items:center;justify-content:center">{{ orb }}</div>
+  <div style="position:relative;z-index:1;display:flex;align-items:flex-end;gap:4px;height:36px">{{ wave }}</div>
+  <div style="position:relative;z-index:1;width:min(620px,100%);text-align:center;display:flex;flex-direction:column;gap:12px">
+    <div style="font-family:'Inter',-apple-system,sans-serif;font-size:21px;font-weight:500;line-height:1.4;color:#16151a">"Walk me through why my rubric keeps rewarding verbose answers."</div>
+    <div style="font-size:14px;line-height:1.7;color:#6b6862">Because length correlates with your "thoroughness" criterion. Let's separate coverage from verbosity — I'll suggest two rewrites, then quiz you on which one a lazy grader would abuse.</div>
+  </div>
+  <div style="position:relative;z-index:1;display:flex;align-items:center;gap:12px">
+    <button style="all:unset;box-sizing:border-box;cursor:pointer;width:48px;height:48px;border-radius:9999px;background:#ffffff;border:1px solid rgba(0,0,0,.11);display:flex;align-items:center;justify-content:center;color:#4a4843" style-hover="border-color:rgba(0,0,0,.3);color:#16151a" title="Mute">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3"></path></svg>
+    </button>
+    <button onClick="{{ toggleListen }}" style="all:unset;box-sizing:border-box;cursor:pointer;padding:15px 30px;border-radius:9999px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:9px;transition:all 200ms" background="{{ listenBg }}" color="{{ listenColor }}" box-shadow="{{ listenShadow }}">{{ listenLabel }}</button>
+    <button style="all:unset;box-sizing:border-box;cursor:pointer;width:48px;height:48px;border-radius:9999px;background:#ffffff;border:1px solid rgba(0,0,0,.11);display:flex;align-items:center;justify-content:center;color:#4a4843" style-hover="border-color:rgba(0,0,0,.3);color:#16151a" title="Transcript">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h8"></path></svg>
+    </button>
+  </div>
+  <div style="position:relative;z-index:1;display:flex;gap:9px;flex-wrap:wrap;justify-content:center">
+    <span style="font-size:11.5px;padding:7px 13px;border-radius:9999px;background:#ffffff;border:1px solid rgba(0,0,0,.07);color:#6b6862">Context: LLM Evaluation · ch. 3</span>
+    <span style="font-size:11.5px;padding:7px 13px;border-radius:9999px;background:#ffffff;border:1px solid rgba(0,0,0,.07);color:#6b6862">Saves transcript &amp; new cards</span>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isInsights }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;overflow-y:auto;display:flex;flex-direction:column;padding:30px 2.9%;gap:20px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862;margin-bottom:5px">Insights</div>
+      <div style="font-family:'Inter',-apple-system,sans-serif;font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.1">Where you stand, and what to fix next</div>
+    </div>
+    <div style="display:flex;gap:6px;padding:4px;border-radius:12px;background:rgba(0,0,0,.04)">
+      <span style="font-size:12px;padding:7px 13px;border-radius:10px;background:#ffffff;color:#16151a;font-weight:500">This week</span>
+      <span style="font-size:12px;padding:7px 13px;border-radius:10px;color:#6b6862">30 days</span>
+      <span style="font-size:12px;padding:7px 13px;border-radius:10px;color:#6b6862">All time</span>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px">
+    <div style="padding:14px 16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:9px">
+      <div style="font-size:11.5px;color:#6f6c66">Overall mastery</div>
+      <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:500;color:#3f7a5f">78%</span><span style="font-size:11.5px;color:#3f7a5f">+4</span></div>
+      <div style="height:4px;border-radius:9999px;background:rgba(0,0,0,.07);overflow:hidden"><div style="width:78%;height:100%;background:#3f7a5f"></div></div>
+      <div style="font-size:11px;color:#6f6c66">Weighted across 14 topics</div>
+    </div>
+    <div style="padding:14px 16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:9px">
+      <div style="font-size:11.5px;color:#6f6c66">Study time</div>
+      <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:500">4h 12m</span><span style="font-size:11.5px;color:#6f6c66">this week</span></div>
+      <div style="font-size:11px;color:#6f6c66">61h 40m all time · 36m median session</div>
+    </div>
+    <div style="padding:14px 16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:9px">
+      <div style="font-size:11.5px;color:#6f6c66">Streak</div>
+      <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:500">12</span><span style="font-size:11.5px;color:#6f6c66">days · longest 21</span></div>
+      <div style="display:flex;gap:3px"><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:#3f7a5f"></div><div style="flex:1;height:5px;border-radius:9999px;background:rgba(0,0,0,.09)"></div><div style="flex:1;height:5px;border-radius:9999px;background:rgba(0,0,0,.09)"></div></div>
+    </div>
+    <div style="padding:14px 16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:9px">
+      <div style="font-size:11.5px;color:#6f6c66">Due today</div>
+      <div style="display:flex;align-items:baseline;gap:7px"><span style="font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:500">12</span><span style="font-size:11.5px;color:#6f6c66">of 30 done</span></div>
+      <div style="height:4px;border-radius:9999px;background:rgba(0,0,0,.07);overflow:hidden"><div style="width:40%;height:100%;background:#16151a"></div></div>
+      <div style="font-size:11px;color:#6f6c66">18 cards, 4 questions left</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+    <div style="padding:16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Accuracy trend</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66">30d · 84% now</span></div>
+      <svg viewBox="0 0 320 110" preserveAspectRatio="none" style="width:100%;height:132px">
+        <line x1="0" y1="14" x2="320" y2="14" stroke="rgba(0,0,0,.06)" stroke-width="1"></line>
+        <line x1="0" y1="48" x2="320" y2="48" stroke="rgba(0,0,0,.06)" stroke-width="1"></line>
+        <line x1="0" y1="82" x2="320" y2="82" stroke="rgba(0,0,0,.06)" stroke-width="1"></line>
+        <polyline points="4,86 30,78 56,80 82,66 108,70 134,58 160,60 186,46 212,50 238,38 264,34 290,28 316,22" fill="none" stroke="#3f7a5f" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+        <circle cx="316" cy="22" r="3.5" fill="#3f7a5f"></circle>
+      </svg>
+      <div style="display:flex;justify-content:space-between;font-size:10.5px;color:#6f6c66"><span>Aug 11</span><span>Aug 25</span><span>Sep 9</span></div>
+    </div>
+    <div style="padding:16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Coverage map</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66">72% touched</span></div>
+      <div style="display:flex;height:12px;border-radius:9999px;overflow:hidden;background:rgba(0,0,0,.07)"><div style="width:48%;background:#3f7a5f"></div><div style="width:24%;background:rgba(63,122,95,.42)"></div></div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#4a4843">
+        <div style="display:flex;gap:9px;align-items:center"><span style="width:9px;height:9px;border-radius:3px;background:#3f7a5f"></span><span style="flex:1">Mastered</span><span style="font-family:'JetBrains Mono',monospace;color:#6f6c66">48%</span></div>
+        <div style="display:flex;gap:9px;align-items:center"><span style="width:9px;height:9px;border-radius:3px;background:rgba(63,122,95,.42)"></span><span style="flex:1">Seen, not tested</span><span style="font-family:'JetBrains Mono',monospace;color:#6f6c66">24%</span></div>
+        <div style="display:flex;gap:9px;align-items:center"><span style="width:9px;height:9px;border-radius:3px;background:rgba(0,0,0,.12)"></span><span style="flex:1">Untouched</span><span style="font-family:'JetBrains Mono',monospace;color:#6f6c66">28%</span></div>
+      </div>
+      <div style="font-size:11.5px;color:#6f6c66;line-height:1.5">Untouched content sits mostly in Chapters 7–9 of Transformers, distilled.</div>
+    </div>
+    <div style="padding:16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Consistency</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66">19 of 35 days</span></div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px">
+        <div style="aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,.06)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.35)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,.06)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.6)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.35)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,.06)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,.06)"></div>
+        <div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.6)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.35)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,.06)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.85)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.35)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.6)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,.06)"></div>
+        <div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.35)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.85)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.6)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,.06)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.35)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.85)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.6)"></div>
+        <div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.85)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.6)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.85)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.35)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.6)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(0,0,0,.06)"></div><div style="aspect-ratio:1;border-radius:4px;background:rgba(63,122,95,.85)"></div>
+      </div>
+      <div style="font-size:11.5px;color:#6f6c66;line-height:1.5">Four sessions a week, mostly evenings — weekends are your gap.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;padding-bottom:8px">
+    <div style="padding:16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Topics, strongest to weakest</span><span style="font-size:11px;color:#6f6c66">14 topics</span></div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;align-items:center;gap:12px"><span style="flex:1;font-size:13px;color:#16151a">Self-attention</span><div style="width:92px;height:5px;border-radius:9999px;background:rgba(0,0,0,.07);overflow:hidden"><div style="width:94%;height:100%;background:#3f7a5f"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;width:30px;text-align:right">94</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="flex:1;font-size:13px;color:#16151a">Loss functions</span><div style="width:92px;height:5px;border-radius:9999px;background:rgba(0,0,0,.07);overflow:hidden"><div style="width:88%;height:100%;background:#3f7a5f"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;width:30px;text-align:right">88</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="flex:1;font-size:13px;color:#16151a">Multi-head attention</span><div style="width:92px;height:5px;border-radius:9999px;background:rgba(0,0,0,.07);overflow:hidden"><div style="width:76%;height:100%;background:#3f7a5f"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;width:30px;text-align:right">76</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="flex:1;font-size:13px;color:#16151a">Positional encoding</span><div style="width:92px;height:5px;border-radius:9999px;background:rgba(0,0,0,.07);overflow:hidden"><div style="width:58%;height:100%;background:rgba(63,122,95,.55)"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;width:30px;text-align:right">58</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="flex:1;font-size:13px;color:#16151a">Bayes rule</span><div style="width:92px;height:5px;border-radius:9999px;background:rgba(0,0,0,.07);overflow:hidden"><div style="width:41%;height:100%;background:#b8474a"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;width:30px;text-align:right">41</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="flex:1;font-size:13px;color:#16151a">Backpropagation</span><div style="width:92px;height:5px;border-radius:9999px;background:rgba(0,0,0,.07);overflow:hidden"><div style="width:34%;height:100%;background:#b8474a"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;width:30px;text-align:right">34</span></div>
+      </div>
+    </div>
+    <div style="padding:16px;background:rgba(63,122,95,.06);border:1px solid rgba(63,122,95,.22);border-radius:14px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#2f6b50">This week's priority list</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:11px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3f7a5f">01</span><div style="flex:1"><div style="font-size:13.5px;color:#16151a">Backpropagation</div><div style="font-size:11.5px;color:#6f6c66;margin-top:2px">Lowest mastery · 14 days since review</div></div><span style="font-size:10.5px;padding:4px 8px;border-radius:8px;background:rgba(184,71,74,.12);color:#8f3134">High decay</span></div>
+        <div style="display:flex;gap:11px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3f7a5f">02</span><div style="flex:1"><div style="font-size:13.5px;color:#16151a">Bayes rule</div><div style="font-size:11.5px;color:#6f6c66;margin-top:2px">Two failed quizzes in a row</div></div><span style="font-size:10.5px;padding:4px 8px;border-radius:8px;background:rgba(184,71,74,.12);color:#8f3134">High decay</span></div>
+        <div style="display:flex;gap:11px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3f7a5f">03</span><div style="flex:1"><div style="font-size:13.5px;color:#16151a">Positional encoding</div><div style="font-size:11.5px;color:#6f6c66;margin-top:2px">Improving, but still under target</div></div><span style="font-size:10.5px;padding:4px 8px;border-radius:8px;background:rgba(0,0,0,.06);color:#4a4843">Medium</span></div>
+        <div style="display:flex;gap:11px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3f7a5f">04</span><div style="flex:1"><div style="font-size:13.5px;color:#16151a">Attention masks</div><div style="font-size:11.5px;color:#6f6c66;margin-top:2px">Never tested — 0 cards drawn</div></div><span style="font-size:10.5px;padding:4px 8px;border-radius:8px;background:rgba(0,0,0,.06);color:#4a4843">Untested</span></div>
+      </div>
+      <button onClick="{{ goTesting }}" style="all:unset;box-sizing:border-box;cursor:pointer;margin-top:2px;text-align:center;padding:11px;border-radius:12px;background:#16151a;color:#ffffff;font-size:12.5px;font-weight:600" style-hover="background:#3f7a5f">Build a 20-minute session from these</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isResearch }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;overflow-y:auto;display:flex;flex-direction:column;padding:30px 2.9%;gap:20px">
+  <div>
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Deep Research</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 7px;border-radius:8px;background:rgba(63,122,95,.12);color:#2f6b50">MULTI-STEP</span></div>
+    <div style="font-family:'Inter',-apple-system,sans-serif;font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.1">A researched brief, not a list of links</div>
+  </div>
+
+  <div style="padding:16px;background:#ffffff;border:1px solid rgba(0,0,0,.07);border-radius:14px;display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:15px;line-height:1.55;color:#16151a">Compare evaluation frameworks for agentic tool use — what each one measures, where they disagree, and which fits a 5-person team.<span style="display:inline-block;width:1.5px;height:16px;background:#3f7a5f;vertical-align:-3px;margin-left:2px"></span></div>
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;gap:4px;padding:4px;border-radius:12px;background:rgba(0,0,0,.04)">
+        <span style="font-size:11.5px;padding:6px 12px;border-radius:10px;color:#6b6862">Quick</span>
+        <span style="font-size:11.5px;padding:6px 12px;border-radius:10px;background:#ffffff;color:#16151a;font-weight:500">Standard</span>
+        <span style="font-size:11.5px;padding:6px 12px;border-radius:10px;color:#6b6862">Exhaustive</span>
+      </div>
+      <span style="font-size:11.5px;padding:7px 12px;border-radius:9999px;background:rgba(63,122,95,.1);color:#2f6b50;border:1px solid rgba(63,122,95,.2)">Papers + docs</span>
+      <span style="font-size:11.5px;padding:7px 12px;border-radius:9999px;background:rgba(0,0,0,.03);color:#4a4843;border:1px solid rgba(0,0,0,.08)">My library</span>
+      <button style="all:unset;box-sizing:border-box;cursor:pointer;margin-left:auto;padding:11px 20px;border-radius:12px;background:#16151a;color:#ffffff;font-size:12.5px;font-weight:600" style-hover="background:#3f7a5f">Run research</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;padding-bottom:8px">
+    <div style="padding:16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:9px"><span style="width:7px;height:7px;border-radius:9999px;background:#3f7a5f"></span><span style="font-size:12.5px;font-weight:500;color:#16151a">Working — step 4 of 6</span><span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66">03:18</span></div>
+      <div style="display:flex;flex-direction:column;gap:11px;font-size:12.5px;line-height:1.5">
+        <div style="display:flex;gap:10px;color:#4a4843"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.8" stroke-linecap="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Split the question into five sub-questions</div>
+        <div style="display:flex;gap:10px;color:#4a4843"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.8" stroke-linecap="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Gathered 38 sources, kept 21</div>
+        <div style="display:flex;gap:10px;color:#4a4843"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3f7a5f" stroke-width="1.8" stroke-linecap="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Cross-checked three conflicting claims</div>
+        <div style="display:flex;gap:10px;color:#16151a"><span style="width:15px;flex:none;text-align:center;color:#3f7a5f">•</span>Drafting the comparison table</div>
+        <div style="display:flex;gap:10px;color:#6f6c66"><span style="width:15px;flex:none;text-align:center">•</span>Write the recommendation for a small team</div>
+        <div style="display:flex;gap:10px;color:#6f6c66"><span style="width:15px;flex:none;text-align:center">•</span>Attach citations and open questions</div>
+      </div>
+      <div style="padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.05);font-size:11.5px;line-height:1.6;color:#6f6c66">Two sources disagree on whether tool-call accuracy should be scored per step or per task. I'll present both and flag the tradeoff rather than pick for you.</div>
+    </div>
+    <div style="padding:16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Draft brief</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66">21 citations</span></div>
+      <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;color:#4a4843">
+        <div style="display:flex;gap:10px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;margin-top:2px">01</span><span style="flex:1;color:#16151a">What "agentic evaluation" actually measures</span></div>
+        <div style="display:flex;gap:10px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;margin-top:2px">02</span><span style="flex:1;color:#16151a">Framework by framework — scope and blind spots</span></div>
+        <div style="display:flex;gap:10px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;margin-top:2px">03</span><span style="flex:1;color:#16151a">Where the literature disagrees</span></div>
+        <div style="display:flex;gap:10px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6c66;margin-top:2px">04</span><span style="flex:1;color:#6f6c66">Recommendation for a small team</span></div>
+      </div>
+      <div style="padding:13px 15px;border-radius:12px;background:rgba(63,122,95,.06);border:1px solid rgba(63,122,95,.18);font-size:12.5px;line-height:1.65;color:#16151a">Early read: per-task scoring correlates better with user-visible success, but you'll want per-step traces to debug. Most teams end up running both on a 50-task suite.</div>
+      <div style="display:flex;gap:9px;margin-top:auto;flex-wrap:wrap">
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 18px;border-radius:12px;background:#16151a;color:#ffffff;font-size:12.5px;font-weight:600" style-hover="background:#3f7a5f">Turn into a chapter</button>
+        <button style="all:unset;box-sizing:border-box;cursor:pointer;padding:11px 18px;border-radius:12px;background:#ffffff;border:1px solid rgba(0,0,0,.11);font-size:12.5px;font-weight:500;color:#16151a" style-hover="border-color:rgba(0,0,0,.28)">Export brief</button>
+      </div>
+    </div>
+    <div style="padding:16px;background:#ffffff;border:1px solid rgba(0,0,0,.055);box-shadow:0 1px 2px rgba(0,0,0,.035);border-radius:14px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6b6862">Past reports</span><span style="font-size:11px;color:#6f6c66">2 saved</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="padding:13px 15px;border-radius:12px;border:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)"><div style="font-size:13.5px;color:#16151a">RLHF vs. DPO — practical differences</div><div style="font-size:11.5px;color:#6f6c66">31 sources · became Chapter 6</div></div>
+        <div style="padding:13px 15px;border-radius:12px;border:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:border-color 200ms" style-hover="border-color:rgba(0,0,0,.18)"><div style="font-size:13.5px;color:#16151a">Long-context retrieval, 2024–2026</div><div style="font-size:11.5px;color:#6f6c66">44 sources · 2 open questions</div></div>
+      </div>
+      <div style="font-size:11.5px;color:#6f6c66;line-height:1.55;margin-top:auto">Reports keep their citations, so any chapter built from one stays traceable to its sources.</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;activeTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;builder&quot;,&quot;learning&quot;,&quot;testing&quot;,&quot;search&quot;,&quot;mentor&quot;],&quot;default&quot;:&quot;overview&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Mockup state&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3f7a5f&quot;,&quot;options&quot;:[&quot;#3f7a5f&quot;,&quot;#3f7a5f&quot;,&quot;#3f7a5f&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  state = { tab: null, sub: 'drop', test: 'flash', flipped: false, picked: null, listening: true };
+
+  get tab() { return this.state.tab || this.props.activeTab || 'overview'; }
+
+  go(tab) { return () => this.setState({ tab }); }
+
+  renderVals() {
+    const tab = this.tab, accent = this.props.accent ?? '#3f7a5f';
+    const activeBg = 'rgba(0,0,0,.05)';
+    const navDefs = [
+      { id: 'overview', label: 'Overview', icon: 'M3 11.5L12 4l9 7.5M5.5 10v9.5h13V10', meta: '' },
+      { id: 'builder', label: 'Course Builder', icon: 'M4 4h10l6 6v10H4zM14 4v6h6', meta: '3' },
+      { id: 'learning', label: 'Learning', icon: 'M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z', meta: '' },
+      { id: 'testing', label: 'Testing', icon: 'M9 3h6v3l-4 6v6a2 2 0 004 0v-6l-4-6', meta: '18' },
+      { id: 'insights', label: 'Insights', icon: 'M4 19V5M4 19h16M8 19v-7M13 19V9M18 19v-4', meta: '' },
+      { id: 'search', label: 'Search', icon: 'M11 4a7 7 0 100 14 7 7 0 000-14zM16.5 16.5L21 21', meta: '' },
+      { id: 'research', label: 'Deep Research', icon: 'M6 3h9l4 4v14H6zM10 12h6M10 16h4M10 8h3', meta: '2' },
+      { id: 'mentor', label: 'AI Mentor', icon: 'M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3', meta: '' },
+    ];
+    const nav = navDefs.map(n => ({
+      ...n,
+      bg: tab === n.id ? activeBg : 'transparent',
+      color: tab === n.id ? '#16151a' : '#6b6862',
+      showSubs: n.id === 'builder' && tab === 'builder',
+      onClick: this.go(n.id),
+    }));
+
+    const subDefs = [
+      { id: 'drop', label: 'Drop Text / PDF' },
+      { id: 'generate', label: 'Generate + Research' },
+      { id: 'browse', label: 'Browse Materials' },
+    ];
+    const subs = subDefs.map(s => ({
+      label: s.label,
+      color: this.state.sub === s.id ? '#16151a' : '#6b6862',
+      bg: this.state.sub === s.id ? '#ffffff' : 'transparent',
+      pillBg: this.state.sub === s.id ? 'rgba(0,0,0,.06)' : 'transparent',
+      pillColor: this.state.sub === s.id ? '#16151a' : '#6b6862',
+      onClick: () => this.setState({ tab: 'builder', sub: s.id }),
+    }));
+    const subTitle = (subDefs.find(s => s.id === this.state.sub) || subDefs[0]).label;
+
+    const modeDefs = [
+      { id: 'flash', title: 'Flashcards', desc: 'Spaced repetition over every concept the notes marked as testable.', meta: '40 CARDS · 18 DUE', icon: 'M4 6h11v10H4zM8 4h12v10' },
+      { id: 'mcq', title: 'Four-choice quiz', desc: 'Multiple choice with distractors written from your weak spots.', meta: '20 QUESTIONS · 12 MIN', icon: 'M5 7h14M5 12h14M5 17h9M3 7h.01M3 12h.01M3 17h.01' },
+      { id: 'tutor', title: 'AI Tutor', desc: 'Socratic back-and-forth that adapts to what you just got wrong.', meta: 'CHAT · VOICE READY', icon: 'M4 5h16v10H9l-5 4z' },
+    ];
+    const modes = modeDefs.map(m => ({
+      ...m,
+      bg: this.state.test === m.id ? 'rgba(63,122,95,.09)' : '#ffffff',
+      border: this.state.test === m.id ? '1px solid rgba(63,122,95,.4)' : '1px solid rgba(0,0,0,.08)',
+      iconColor: this.state.test === m.id ? accent : '#6f6c66',
+      onClick: () => this.setState({ tab: 'testing', test: m.id }),
+    }));
+
+    const choiceDefs = [
+      { key: 'A', text: 'They use fewer parameters, so they overfit less to sequence length.', ok: false },
+      { key: 'B', text: 'Relative offsets are a linear function of the encoding, so the pattern extends past training lengths.', ok: true },
+      { key: 'C', text: 'They are re-normalised at inference time for the observed sequence length.', ok: false },
+      { key: 'D', text: 'Attention ignores positional signal beyond the training window anyway.', ok: false },
+    ];
+    const picked = this.state.picked;
+    const choices = choiceDefs.map(c => {
+      let bg = 'rgba(0,0,0,.02)', border = '1px solid rgba(0,0,0,.1)', color = '#4a4843', mark = '';
+      if (picked) {
+        if (c.ok) { bg = 'rgba(63,122,95,.14)'; border = '1px solid rgba(63,122,95,.4)'; color = '#16151a'; mark = '✓'; }
+        else if (picked === c.key) { bg = 'rgba(184,71,74,.12)'; border = '1px solid rgba(184,71,74,.35)'; color = '#16151a'; mark = '✕'; }
+      }
+      return { ...c, bg, border, color, mark, onClick: () => this.setState({ picked: c.key }) };
+    });
+
+    const wave = React.createElement('div', { style: { display: 'flex', alignItems: 'flex-end', gap: 4, height: 36 } },
+      [0.0, 0.18, 0.36, 0.09, 0.5, 0.27, 0.42, 0.12, 0.33, 0.05, 0.22, 0.45].map((d, i) =>
+        React.createElement('div', {
+          key: i,
+          style: {
+            width: 3, borderRadius: 9999, background: i % 3 === 0 ? '#16151a' : 'rgba(0,0,0,.22)',
+            animation: this.state.listening ? `bar 1.1s ${d}s cubic-bezier(.4,0,.2,1) infinite` : 'none',
+            height: this.state.listening ? '30%' : '14%',
+          },
+        })));
+
+    const orb = React.createElement('div', { style: { position: 'relative', width: 220, height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+      React.createElement('div', { style: { position: 'absolute', width: 200, height: 200, borderRadius: 9999, border: '1px solid rgba(0,0,0,.14)', animation: this.state.listening ? 'ringOut 3.2s cubic-bezier(.4,0,.2,1) infinite' : 'none' } }),
+      React.createElement('div', { style: { position: 'absolute', width: 200, height: 200, borderRadius: 9999, border: '1px solid rgba(0,0,0,.09)', animation: this.state.listening ? 'ringOut 3.2s 1.6s cubic-bezier(.4,0,.2,1) infinite' : 'none' } }),
+      React.createElement('div', {
+        style: {
+          width: 116, height: 116, borderRadius: 9999,
+          background: accent,
+          
+          animation: this.state.listening ? 'orbPulse 3s cubic-bezier(.4,0,.2,1) infinite' : 'none',
+        },
+      }));
+
+    return {
+      nav, subs, subTitle, modes, choices, orb, wave,
+      isOverview: tab === 'overview', isBuilder: tab === 'builder', isLearning: tab === 'learning',
+      isTesting: tab === 'testing', isSearch: tab === 'search', isMentor: tab === 'mentor',
+      isInsights: tab === 'insights', isResearch: tab === 'research',
+      isDrop: this.state.sub === 'drop', isGenerate: this.state.sub === 'generate', isBrowse: this.state.sub === 'browse',
+      isFlash: this.state.test === 'flash', isMcq: this.state.test === 'mcq', isTutor: this.state.test === 'tutor',
+      answered: !!picked,
+      nextQ: () => this.setState({ picked: null }),
+      goMentor: this.go('mentor'),
+      flip: () => this.setState(s => ({ flipped: !s.flipped })),
+      cardSide: this.state.flipped ? 'Answer' : 'Prompt',
+      cardText: this.state.flipped
+        ? 'Because attention is permutation-invariant — order must be injected into the embeddings.'
+        : 'Why does a transformer need positional information at all?',
+      cardHint: this.state.flipped ? 'Rate your recall below' : 'Click the card to reveal',
+      statusLabel: this.state.listening ? 'Listening — speak naturally, interrupt any time' : 'Paused · tap to resume',
+      listenLabel: this.state.listening ? 'Pause session' : 'Resume session',
+      listenBg: this.state.listening ? '#ffffff' : '#16151a',
+      listenColor: this.state.listening ? '#16151a' : '#faf9f7',
+      listenShadow: 'inset 0 0 0 1px rgba(0,0,0,.14)',
+      toggleListen: () => this.setState(s => ({ listening: !s.listening })),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kiln — AI learning workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============ ICON SPRITE ============ -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="icon-home" viewBox="0 0 24 24"><polyline points="4 11 12 4 20 11"/><path d="M6 10.5V20a1 1 0 0 0 1 1h3v-5h4v5h3a1 1 0 0 0 1-1v-9.5"/></symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24"><polygon points="12 3 21 8 12 13 3 8"/><polyline points="3 12 12 17 21 12"/></symbol>
+  <symbol id="icon-tray" viewBox="0 0 24 24"><path d="M12 3v10"/><polyline points="8 9 12 13 16 9"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+  <symbol id="icon-spark" viewBox="0 0 24 24"><path d="M12 2 14.2 9.8 22 12 14.2 14.2 12 22 9.8 14.2 2 12 9.8 9.8Z"/></symbol>
+  <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24"><path d="M3 5.5C3 4.7 3.7 4 4.5 4H11v16H4.5C3.7 20 3 19.3 3 18.5Z"/><path d="M21 5.5c0-.8-.7-1.5-1.5-1.5H13v16h6.5c.8 0 1.5-.7 1.5-1.5Z"/></symbol>
+  <symbol id="icon-notes" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="20.5" y2="20.5"/></symbol>
+  <symbol id="icon-wave" viewBox="0 0 24 24"><line x1="4" y1="9" x2="4" y2="15"/><line x1="8" y1="5" x2="8" y2="19"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="16" y1="5" x2="16" y2="19"/><line x1="20" y1="9" x2="20" y2="15"/></symbol>
+  <symbol id="icon-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24"><path d="M12 3.5 14.6 9.4 21 10 16.3 14.3 17.6 20.5 12 17.2 6.4 20.5 7.7 14.3 3 10 9.4 9.4Z"/></symbol>
+  <symbol id="icon-flame" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 2c1 3-3 4.5-3 8a3 3 0 0 0 6 0c0-1-1-1.8-1-1.8s2 1.3 2 4.3a5 5 0 0 1-10 0C6 8 9 6 9 3c0 0 1.5 1 1.5 3 0 0 1.5-1 1.5-4Z"/></symbol>
+  <symbol id="icon-trend-up" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="9 7 17 7 17 15"/></symbol>
+  <symbol id="icon-trend-down" viewBox="0 0 24 24"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="9 17 17 17 17 9"/></symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><polyline points="12 7.5 12 12 15.5 14"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><polyline points="4 12.5 9.5 18 20 6"/></symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="icon-ext-link" viewBox="0 0 24 24"><path d="M9 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3"/><path d="M14 4h6v6"/><line x1="20" y1="4" x2="11" y2="13"/></symbol>
+  <symbol id="icon-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/></symbol>
+  <symbol id="icon-cc" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M9.5 11.6a1.6 1.6 0 0 0-3.1.4v0a1.6 1.6 0 0 0 3.1.4"/><path d="M17 11.6a1.6 1.6 0 0 0-3.1.4v0a1.6 1.6 0 0 0 3.1.4"/></symbol>
+  <symbol id="icon-end" viewBox="0 0 24 24"><path d="M4.5 13.2c3.5-4 11.5-4 15 0" /><path d="M8.5 15.6l1.3-2.2a2.7 2.7 0 0 1 4.4 0l1.3 2.2" /><line x1="4" y1="20" x2="20" y2="4" /></symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 16V4"/><polyline points="7 9 12 4 17 9"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></symbol>
+  <symbol id="icon-file" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6Z"/><polyline points="15 3 15 6 18 6"/></symbol>
+</svg>
+
+<div class="app-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark"><svg class="icon"><use href="#icon-flame"/></svg></span>
+      <div class="brand-text">
+        <span class="brand-name">Kiln</span>
+        <span class="brand-tag">LEARNING, REFINED</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <button class="nav-item" data-view="overview" data-active="true">
+        <svg class="icon"><use href="#icon-home"/></svg>
+        <span class="label">Overview</span>
+      </button>
+
+      <div class="nav-section-gap"></div>
+
+      <div class="nav-group" data-group="course-builder" data-open="true">
+        <button class="nav-item nav-parent" data-toggle="course-builder">
+          <svg class="icon"><use href="#icon-layers"/></svg>
+          <span class="label">Course Builder</span>
+          <svg class="icon icon-sm chevron"><use href="#icon-chevron"/></svg>
+        </button>
+        <div class="nav-children" id="group-course-builder">
+          <div>
+            <button class="nav-child" data-view="drop" data-active="true">Drop Text / PDF</button>
+            <button class="nav-child" data-view="generate">Generate + Research</button>
+            <button class="nav-child" data-view="browse">Browse Materials</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="learning" data-open="false">
+        <button class="nav-item nav-parent" data-toggle="learning">
+          <svg class="icon"><use href="#icon-book"/></svg>
+          <span class="label">Learning</span>
+          <svg class="icon icon-sm chevron"><use href="#icon-chevron"/></svg>
+        </button>
+        <div class="nav-children" id="group-learning">
+          <div>
+            <button class="nav-child" data-view="notes">Notes Preview</button>
+            <button class="nav-child" data-view="testing">Testing</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-section-gap"></div>
+
+      <button class="nav-item" data-view="search">
+        <svg class="icon"><use href="#icon-search"/></svg>
+        <span class="label">Search Agent</span>
+        <span class="nav-badge">Exa</span>
+      </button>
+
+      <button class="nav-item" data-view="mentor">
+        <svg class="icon"><use href="#icon-wave"/></svg>
+        <span class="label">AI Mentor</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="kiln-meter">
+        <div class="kiln-meter-top">
+          <span class="meter-label">Mastery heat</span>
+          <span class="meter-value">68%</span>
+        </div>
+        <div class="meter-track"><div class="meter-fill" style="width:68%"></div></div>
+      </div>
+      <button class="user-chip">
+        <span class="avatar">S</span>
+        <span class="user-info"><strong>Stefan</strong><small>Free plan · 12 day streak</small></span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ WORKSPACE ============ -->
+  <main class="workspace">
+
+    <header class="topbar" id="topbar">
+      <div class="topbar-title">
+        <h1 id="topbarTitle">Overview</h1>
+        <p id="topbarSub">Where you left off, and what's earning its place in the pile.</p>
+      </div>
+      <div class="topbar-actions" id="topbarActions">
+        <button class="btn btn-ghost"><svg class="icon icon-sm"><use href="#icon-search"/></svg>Search</button>
+        <button class="btn btn-primary"><svg class="icon icon-sm"><use href="#icon-plus"/></svg>New course</button>
+      </div>
+    </header>
+
+    <div class="view-container" id="view-container">
+
+      <!-- ============ OVERVIEW ============ -->
+      <section class="view active" id="view-overview" data-topbar-title="Overview" data-topbar-sub="Where you left off, and what's earning its place in the pile.">
+
+        <div class="ov-row ov-row-analytics">
+          <div class="section-head">
+            <div class="titles">
+              <span class="eyebrow">Quick analytics</span>
+              <h2>This week in the kiln</h2>
+            </div>
+            <a class="view-all" href="#">Full report <svg class="icon icon-sm"><use href="#icon-ext-link"/></svg></a>
+          </div>
+          <div class="stat-row">
+            <div class="stat-card is-primary">
+              <div class="stat-top">
+                <span class="stat-icon"><svg class="icon icon-sm"><use href="#icon-flame"/></svg></span>
+                <span class="stat-trend"><svg class="icon icon-sm"><use href="#icon-trend-up"/></svg>+4</span>
+              </div>
+              <div>
+                <div class="stat-value">12</div>
+                <div class="stat-label">Day study streak</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <span class="stat-icon"><svg class="icon icon-sm"><use href="#icon-check"/></svg></span>
+                <span class="stat-trend"><svg class="icon icon-sm"><use href="#icon-trend-up"/></svg>+58</span>
+              </div>
+              <div>
+                <div class="stat-value">342</div>
+                <div class="stat-label">Cards mastered</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <span class="stat-icon"><svg class="icon icon-sm"><use href="#icon-target"/></svg></span>
+                <span class="stat-trend down"><svg class="icon icon-sm"><use href="#icon-trend-down"/></svg>-2%</span>
+              </div>
+              <div>
+                <div class="stat-value">87%</div>
+                <div class="stat-label">Average recall</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-top">
+                <span class="stat-icon"><svg class="icon icon-sm"><use href="#icon-layers"/></svg></span>
+                <span class="stat-trend"><svg class="icon icon-sm"><use href="#icon-trend-up"/></svg>+1</span>
+              </div>
+              <div>
+                <div class="stat-value">5</div>
+                <div class="stat-label">Active courses</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ov-row ov-row-recent">
+          <div class="section-head">
+            <div class="titles">
+              <span class="eyebrow">Recently accessed</span>
+              <h2>Pick back up</h2>
+            </div>
+            <a class="view-all" href="#">View all</a>
+          </div>
+          <div class="h-scroll">
+            <div class="res-card">
+              <span class="res-tag course">Course</span>
+              <h3>Distributed Systems: Consensus</h3>
+              <div class="res-progress"><span style="width:64%"></span></div>
+              <span class="res-meta"><svg class="icon icon-sm"><use href="#icon-clock"/></svg>Opened 2h ago</span>
+            </div>
+            <div class="res-card">
+              <span class="res-tag notes">Notes</span>
+              <h3>Load Balancing Strategies</h3>
+              <div class="res-progress"><span style="width:100%"></span></div>
+              <span class="res-meta"><svg class="icon icon-sm"><use href="#icon-clock"/></svg>Opened yesterday</span>
+            </div>
+            <div class="res-card">
+              <span class="res-tag deck">Deck</span>
+              <h3>CAP Theorem Flashcards</h3>
+              <div class="res-progress"><span style="width:41%"></span></div>
+              <span class="res-meta"><svg class="icon icon-sm"><use href="#icon-clock"/></svg>Opened yesterday</span>
+            </div>
+            <div class="res-card">
+              <span class="res-tag research">Research</span>
+              <h3>Kubernetes Autoscaling, 2026 survey</h3>
+              <div class="res-progress"><span style="width:20%"></span></div>
+              <span class="res-meta"><svg class="icon icon-sm"><use href="#icon-clock"/></svg>Opened 3 days ago</span>
+            </div>
+            <div class="res-card">
+              <span class="res-tag course">Course</span>
+              <h3>Database Sharding Patterns</h3>
+              <div class="res-progress"><span style="width:12%"></span></div>
+              <span class="res-meta"><svg class="icon icon-sm"><use href="#icon-clock"/></svg>Opened 4 days ago</span>
+            </div>
+            <div class="res-card">
+              <span class="res-tag notes">Notes</span>
+              <h3>Idempotency in Payment APIs</h3>
+              <div class="res-progress"><span style="width:80%"></span></div>
+              <span class="res-meta"><svg class="icon icon-sm"><use href="#icon-clock"/></svg>Opened 5 days ago</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ov-row ov-row-favorites">
+          <div class="section-head">
+            <div class="titles">
+              <span class="eyebrow">Favorites</span>
+              <h2>Kept close</h2>
+            </div>
+            <a class="view-all" href="#">Manage</a>
+          </div>
+          <div class="fav-grid">
+            <div class="fav-card">
+              <div class="fav-top">
+                <span class="res-tag course">Course</span>
+                <span class="fav-star"><svg class="icon icon-sm"><use href="#icon-star"/></svg></span>
+              </div>
+              <h3>System Design Interview Playbook</h3>
+              <span class="fav-meta">9 modules · 64% complete</span>
+            </div>
+            <div class="fav-card">
+              <div class="fav-top">
+                <span class="res-tag notes">Notes</span>
+                <span class="fav-star"><svg class="icon icon-sm"><use href="#icon-star"/></svg></span>
+              </div>
+              <h3>Caching Strategies</h3>
+              <span class="fav-meta">Updated 6 days ago</span>
+            </div>
+            <div class="fav-card">
+              <div class="fav-top">
+                <span class="res-tag deck">Deck</span>
+                <span class="fav-star"><svg class="icon icon-sm"><use href="#icon-star"/></svg></span>
+              </div>
+              <h3>Consistent Hashing</h3>
+              <span class="fav-meta">48 cards · 91% recall</span>
+            </div>
+            <div class="fav-card">
+              <div class="fav-top">
+                <span class="res-tag course">Course</span>
+                <span class="fav-star"><svg class="icon icon-sm"><use href="#icon-star"/></svg></span>
+              </div>
+              <h3>Rate Limiting Algorithms</h3>
+              <span class="fav-meta">5 modules · 30% complete</span>
+            </div>
+            <div class="fav-card">
+              <div class="fav-top">
+                <span class="res-tag notes">Notes</span>
+                <span class="fav-star"><svg class="icon icon-sm"><use href="#icon-star"/></svg></span>
+              </div>
+              <h3>Event-Driven Architecture</h3>
+              <span class="fav-meta">Updated 2 weeks ago</span>
+            </div>
+            <div class="fav-card">
+              <div class="fav-top">
+                <span class="res-tag deck">Deck</span>
+                <span class="fav-star"><svg class="icon icon-sm"><use href="#icon-star"/></svg></span>
+              </div>
+              <h3>Message Queues Deep Dive</h3>
+              <span class="fav-meta">36 cards · 77% recall</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DROP TEXT / PDF ============ -->
+      <section class="view" id="view-drop" data-topbar-title="Drop Text / PDF" data-topbar-sub="Feed the kiln. Raw material goes in here before it's structured into a course.">
+        <div class="view-body">
+          <div class="dropzone">
+            <span class="dropzone-icon"><svg class="icon icon-lg"><use href="#icon-tray"/></svg></span>
+            <h3>Drag files here, or paste raw text</h3>
+            <p>PDF, DOCX, TXT, or Markdown — up to 200 pages per drop. We'll pull out the structure for you.</p>
+            <div class="dz-actions">
+              <button class="btn btn-accent"><svg class="icon icon-sm"><use href="#icon-upload"/></svg>Browse files</button>
+              <span class="dz-or">or</span>
+              <button class="btn btn-ghost">Paste text</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="section-head"><div class="titles"><span class="eyebrow">In progress</span><h2>Recent drops</h2></div></div>
+            <div class="file-list">
+              <div class="file-row is-pdf">
+                <span class="file-icon"><svg class="icon"><use href="#icon-file"/></svg></span>
+                <div class="file-info">
+                  <span class="file-name">raft-consensus-paper.pdf</span>
+                  <span class="file-sub">14.2 MB · dropped 2 minutes ago</span>
+                </div>
+                <div class="mini-progress"><span style="width:72%"></span></div>
+                <span class="status-chip parsing"><span class="status-dot pulse"></span>Parsing</span>
+              </div>
+              <div class="file-row">
+                <span class="file-icon"><svg class="icon"><use href="#icon-file"/></svg></span>
+                <div class="file-info">
+                  <span class="file-name">lecture-notes-cap-theorem.txt</span>
+                  <span class="file-sub">1.1 MB · dropped 20 minutes ago</span>
+                </div>
+                <span class="status-chip ready"><span class="status-dot"></span>Ready</span>
+              </div>
+              <div class="file-row is-pdf">
+                <span class="file-icon"><svg class="icon"><use href="#icon-file"/></svg></span>
+                <div class="file-info">
+                  <span class="file-name">sharding-strategies-whitepaper.pdf</span>
+                  <span class="file-sub">6.4 MB · dropped yesterday</span>
+                </div>
+                <span class="status-chip ready"><span class="status-dot"></span>Ready</span>
+              </div>
+              <div class="file-row">
+                <span class="file-icon"><svg class="icon"><use href="#icon-file"/></svg></span>
+                <div class="file-info">
+                  <span class="file-name">interview-transcript-raw.txt</span>
+                  <span class="file-sub">340 KB · dropped 2 days ago</span>
+                </div>
+                <span class="status-chip error"><span class="status-dot"></span>Couldn't parse</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ GENERATE + RESEARCH ============ -->
+      <section class="view" id="view-generate" data-topbar-title="Generate + Research Content" data-topbar-sub="Fires your dropped material with fresh research to draft a structured course.">
+        <div class="view-body">
+          <div class="gen-layout">
+            <div class="panel">
+              <div class="field">
+                <label>Topic</label>
+                <input type="text" value="Design a URL shortener" />
+              </div>
+              <div class="field">
+                <label>Depth</label>
+                <div class="pill-group">
+                  <span class="pill-option">Quick</span>
+                  <span class="pill-option" data-active="true">Standard</span>
+                  <span class="pill-option">Deep</span>
+                </div>
+              </div>
+              <div class="field">
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Research the open web</strong>
+                    <span>Let the Exa agent fill gaps your materials don't cover</span>
+                  </div>
+                  <span class="switch"></span>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="width:100%; justify-content:center;"><svg class="icon icon-sm"><use href="#icon-spark"/></svg>Fire it up</button>
+            </div>
+
+            <div>
+              <div class="panel" style="margin-bottom:20px;">
+                <div class="agent-steps">
+                  <div class="agent-step is-done">
+                    <span class="step-marker"><svg class="icon icon-sm"><use href="#icon-check"/></svg></span>
+                    <div class="step-body"><strong>Read your materials</strong><span>3 documents, 1 transcript · 41 concepts extracted</span></div>
+                  </div>
+                  <div class="agent-step is-done">
+                    <span class="step-marker"><svg class="icon icon-sm"><use href="#icon-check"/></svg></span>
+                    <div class="step-body"><strong>Researched gaps with Exa</strong><span>12 sources reviewed, 5 cited</span></div>
+                  </div>
+                  <div class="agent-step is-active">
+                    <span class="step-marker">3</span>
+                    <div class="step-body"><strong>Drafting outline</strong><span>Structuring modules and ordering by dependency…</span></div>
+                  </div>
+                  <div class="agent-step is-pending">
+                    <span class="step-marker">4</span>
+                    <div class="step-body"><strong>Build course + first deck</strong><span>Waiting on outline approval</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel outline-preview">
+                <h3>Draft outline · Design a URL shortener</h3>
+                <div class="outline-item">
+                  <span class="outline-num">01</span>
+                  <span class="outline-text">Requirements &amp; back-of-envelope estimation<span class="cite-chip">from your notes</span></span>
+                </div>
+                <div class="outline-item">
+                  <span class="outline-num">02</span>
+                  <span class="outline-text">Encoding schemes: base62 vs. hashing<span class="cite-chip">Exa · 2 sources</span></span>
+                </div>
+                <div class="outline-item">
+                  <span class="outline-num">03</span>
+                  <span class="outline-text">Data model &amp; sharding the redirect table<span class="cite-chip">from your notes</span></span>
+                </div>
+                <div class="outline-item">
+                  <span class="outline-num">04</span>
+                  <span class="outline-text">Caching hot links &amp; cache invalidation<span class="cite-chip">Exa · 3 sources</span></span>
+                </div>
+                <div class="outline-item">
+                  <span class="outline-num">05</span>
+                  <span class="outline-text">Analytics pipeline for click events</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BROWSE MATERIALS ============ -->
+      <section class="view" id="view-browse" data-topbar-title="Browse Materials" data-topbar-sub="Everything you've fed the kiln, in one shelf.">
+        <div class="view-body">
+          <div class="filter-row">
+            <div class="search-input">
+              <svg class="icon icon-sm"><use href="#icon-search"/></svg>
+              <input type="text" placeholder="Search materials…" />
+            </div>
+            <span class="tag-filter" data-active="true">All</span>
+            <span class="tag-filter">PDFs</span>
+            <span class="tag-filter">Notes</span>
+            <span class="tag-filter">Research</span>
+            <span class="tag-filter">Transcripts</span>
+          </div>
+
+          <div class="materials-grid">
+            <div class="material-card">
+              <div class="material-top"><span class="file-icon"><svg class="icon"><use href="#icon-file"/></svg></span><span class="res-tag research">PDF</span></div>
+              <h3>Raft Consensus Paper</h3>
+              <span class="material-meta">14.2 MB · added 2 min ago</span>
+              <div class="material-actions"><button class="btn btn-ghost btn-sm">Use in course</button></div>
+            </div>
+            <div class="material-card">
+              <div class="material-top"><span class="file-icon"><svg class="icon"><use href="#icon-notes"/></svg></span><span class="res-tag notes">Notes</span></div>
+              <h3>Lecture Notes: CAP Theorem</h3>
+              <span class="material-meta">1.1 MB · added 20 min ago</span>
+              <div class="material-actions"><button class="btn btn-ghost btn-sm">Use in course</button></div>
+            </div>
+            <div class="material-card">
+              <div class="material-top"><span class="file-icon"><svg class="icon"><use href="#icon-file"/></svg></span><span class="res-tag research">PDF</span></div>
+              <h3>Sharding Strategies Whitepaper</h3>
+              <span class="material-meta">6.4 MB · added yesterday</span>
+              <div class="material-actions"><button class="btn btn-ghost btn-sm">Use in course</button></div>
+            </div>
+            <div class="material-card">
+              <div class="material-top"><span class="file-icon"><svg class="icon"><use href="#icon-notes"/></svg></span><span class="res-tag course">Transcript</span></div>
+              <h3>Mock Interview — Rate Limiting</h3>
+              <span class="material-meta">340 KB · added 2 days ago</span>
+              <div class="material-actions"><button class="btn btn-ghost btn-sm">Use in course</button></div>
+            </div>
+            <div class="material-card">
+              <div class="material-top"><span class="file-icon"><svg class="icon"><use href="#icon-spark"/></svg></span><span class="res-tag research">Exa research</span></div>
+              <h3>Vector Index Algorithms, 2026 survey</h3>
+              <span class="material-meta">18 sources · added 3 days ago</span>
+              <div class="material-actions"><button class="btn btn-ghost btn-sm">Use in course</button></div>
+            </div>
+            <div class="material-card">
+              <div class="material-top"><span class="file-icon"><svg class="icon"><use href="#icon-file"/></svg></span><span class="res-tag research">PDF</span></div>
+              <h3>Event-Driven Architecture Handbook</h3>
+              <span class="material-meta">9.8 MB · added 1 week ago</span>
+              <div class="material-actions"><button class="btn btn-ghost btn-sm">Use in course</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ NOTES PREVIEW ============ -->
+      <section class="view" id="view-notes" data-topbar-title="Notes Preview" data-topbar-sub="The refined output — readable notes, distilled from what you dropped in.">
+        <div class="view-body" style="flex:1; min-height:0;">
+          <div class="notes-layout">
+            <div class="toc">
+              <div class="toc-item" data-active="true"><span class="toc-num">01</span> The problem with modulo hashing</div>
+              <div class="toc-item"><span class="toc-num">02</span> Building the hash ring</div>
+              <div class="toc-item"><span class="toc-num">03</span> Virtual nodes &amp; balance</div>
+              <div class="toc-item"><span class="toc-num">04</span> Handling node failure</div>
+              <div class="toc-item"><span class="toc-num">05</span> When not to use it</div>
+            </div>
+            <div class="note-doc">
+              <h2>Consistent Hashing</h2>
+              <span class="doc-sub">SECTION 01 · THE PROBLEM WITH MODULO HASHING</span>
+              <p>When you distribute keys across <em>n</em> servers with <code>hash(key) % n</code>, adding or removing a single server reshuffles almost every key's assigned node. For a cache cluster, that means <span class="hl">a near-total cache miss storm</span> every time you scale.</p>
+              <p>Consistent hashing solves this by mapping both servers and keys onto a fixed ring of hash values. A key belongs to the first server it meets walking clockwise. Removing a server only reassigns the keys that were pointing to it — everything else stays put.</p>
+              <div class="ai-annotation">
+                <span class="orb-dot"></span>
+                <p><strong>Kiln mentor note</strong>Try this: if you're prepping for an interview, be ready to explain <em>why</em> the miss storm happens with modulo hashing before you introduce the ring — interviewers often probe this first.</p>
+              </div>
+              <p>In practice, the ring alone isn't enough — a small number of physical nodes maps unevenly onto the ring, so real systems assign each server several <span class="hl">virtual nodes</span> to smooth out the distribution. More on that in the next section.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TESTING ============ -->
+      <section class="view" id="view-testing" data-topbar-title="Testing" data-topbar-sub="Pick how you want to be tested on what you've studied.">
+        <div class="view-body">
+          <div class="mode-grid">
+            <div class="mode-card flash">
+              <span class="mode-icon"><svg class="icon icon-lg"><use href="#icon-layers"/></svg></span>
+              <h3>Flashcards</h3>
+              <p>Spaced-repetition recall drills. Kiln schedules cards right before you'd forget them.</p>
+              <span class="mode-meta">48 cards due today</span>
+              <button class="btn btn-accent">Start session</button>
+            </div>
+            <div class="mode-card quiz">
+              <span class="mode-icon"><svg class="icon icon-lg"><use href="#icon-target"/></svg></span>
+              <h3>4-choice quiz</h3>
+              <p>Timed multiple choice, generated from your notes to check you can spot the wrong answer, too.</p>
+              <span class="mode-meta">20 questions · ~12 min</span>
+              <button class="btn btn-ghost">Start quiz</button>
+            </div>
+            <div class="mode-card tutor">
+              <span class="mode-icon"><svg class="icon icon-lg"><use href="#icon-wave"/></svg></span>
+              <h3>AI Tutor session</h3>
+              <p>Talk it through out loud. The tutor pushes back until your explanation actually holds up.</p>
+              <span class="mode-meta">Voice · open-ended</span>
+              <button class="btn btn-ghost" data-view-link="mentor">Open AI Mentor <svg class="icon icon-sm"><use href="#icon-ext-link"/></svg></button>
+            </div>
+          </div>
+
+          <div>
+            <div class="section-head"><div class="titles"><span class="eyebrow">History</span><h2>Recent results</h2></div></div>
+            <div class="results-table">
+              <div class="results-row head"><span>Deck / quiz</span><span>Mode</span><span>Score</span><span>When</span></div>
+              <div class="results-row">
+                <span>CAP Theorem Flashcards</span>
+                <span class="rmeta">Flashcards</span>
+                <span class="score-bar"><div class="mini-progress"><span style="width:91%"></span></div>91%</span>
+                <span class="rmeta">Today</span>
+              </div>
+              <div class="results-row">
+                <span>Load Balancing Strategies</span>
+                <span class="rmeta">4-choice</span>
+                <span class="score-bar"><div class="mini-progress"><span style="width:75%"></span></div>75%</span>
+                <span class="rmeta">Yesterday</span>
+              </div>
+              <div class="results-row">
+                <span>Consistent Hashing</span>
+                <span class="rmeta">AI Tutor</span>
+                <span class="score-bar"><div class="mini-progress"><span style="width:88%"></span></div>88%</span>
+                <span class="rmeta">2 days ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SEARCH AGENT (EXA) ============ -->
+      <section class="view" id="view-search" data-topbar-title="Search Agent" data-topbar-sub="Ask anything. Exa reads the live web and hands back sourced, structured answers.">
+        <div class="view-body">
+          <div class="exa-search-bar">
+            <svg class="icon"><use href="#icon-search"/></svg>
+            <input type="text" value="latest approaches to vector database indexing, 2026" />
+            <span class="exa-badge">EXA</span>
+          </div>
+
+          <div class="trace">
+            <div class="trace-row is-done"><span class="trace-check"><svg class="icon"><use href="#icon-check"/></svg></span>Searched the web · 34 results</div>
+            <div class="trace-row is-done"><span class="trace-check"><svg class="icon"><use href="#icon-check"/></svg></span>Read 6 sources in full</div>
+            <div class="trace-row is-active"><span class="trace-check"><svg class="icon"><use href="#icon-check"/></svg></span>Synthesizing an answer…</div>
+          </div>
+
+          <div class="answer-panel">
+            <p>Two approaches dominate current production systems. HNSW graphs remain the default for low-latency, high-recall search on in-memory indexes<span class="cite">1</span>, while IVF-PQ variants are preferred once the index outgrows memory, trading some recall for a much smaller footprint<span class="cite">2</span>.</p>
+            <p>A newer thread worth tracking: hybrid indexes that route queries between a graph index and a compressed disk-based index depending on the freshness of the vector<span class="cite">3</span>, which is closer to how Kiln indexes your own notes for the mentor's recall.</p>
+          </div>
+
+          <div>
+            <div class="section-head"><div class="titles"><span class="eyebrow">Sources</span><h2>6 read in full</h2></div></div>
+            <div class="sources-grid">
+              <div class="source-card">
+                <span class="source-domain">arxiv.org</span>
+                <h4>Filtered-DiskANN: Graph Search on Billion-Scale Vectors</h4>
+                <p>Benchmarks HNSW variants against disk-resident graph indexes at scale.</p>
+              </div>
+              <div class="source-card">
+                <span class="source-domain">pinecone.io/blog</span>
+                <h4>When IVF-PQ Beats a Graph Index</h4>
+                <p>A practical breakdown of the memory/recall trade-off in production.</p>
+              </div>
+              <div class="source-card">
+                <span class="source-domain">vldb.org</span>
+                <h4>Hybrid Routing for Freshness-Aware Retrieval</h4>
+                <p>Proposes routing cold vectors to compressed indexes, hot ones to HNSW.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ AI MENTOR — VOICE MODE ============ -->
+      <section class="view" id="view-mentor" data-topbar-title="" data-topbar-sub="" data-hide-topbar="true">
+        <div class="mentor-head">
+          <span class="eyebrow on-ink">AI MENTOR · VOICE SESSION</span>
+          <h1>Consistent hashing, once more</h1>
+        </div>
+
+        <div class="orb-stage">
+          <div class="orb" id="mentorOrb"></div>
+          <div class="mentor-status" id="mentorStatus">Listening</div>
+          <div class="waveform" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <p class="transcript"><span class="live">"So walk me through what happens when a node drops off the ring —"</span> and be specific about which keys actually move.</p>
+        </div>
+
+        <div class="mentor-controls">
+          <button class="mentor-ctrl-btn" id="muteBtn" title="Mute microphone"><svg class="icon"><use href="#icon-mic"/></svg></button>
+          <button class="mentor-end"><svg class="icon icon-sm"><use href="#icon-end"/></svg>End session</button>
+          <button class="mentor-ctrl-btn is-on" id="ccBtn" title="Toggle captions"><svg class="icon"><use href="#icon-cc"/></svg></button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
