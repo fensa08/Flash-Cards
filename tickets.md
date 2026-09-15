@@ -27,7 +27,7 @@ the modernization/KPI queue). Nothing here should be merged into that file.
 ### Dependency graph
 
 ```
-Wave 1 (start now, parallel):        FC-01 🔵   FC-06 🟢   FC-08 🟢 ⚪
+Wave 1 (start now, parallel):        FC-01 🔵   FC-06 🟢   FC-08 🟢 ⚪   FC-09 🟢   FC-10 🟢   FC-11 🟢   FC-12 🟢   FC-13 🟢 ⚪
                                         │
 Wave 2 (after FC-01 merged):      FC-02 🟢  FC-03 🟢  FC-04 🟢  FC-05 🟢  FC-07 🟢 ⚪
 ```
@@ -129,6 +129,79 @@ canvas.
 - Fully independent of the chat work (FC-01–FC-07) and of FC-06 — different files
   entirely (`MindMapView.tsx`). Safe to run in any wave.
 - Polish item — only if time remains.
+
+### FC-09 — Favorites & Pinning System
+**Key:** 🟢 PARALLEL · Wave 2 · Tier D
+**Depends on:** —
+
+Persist user-pinned favorites on the Overview dashboard shelf (supporting courses,
+materials, flashcard decks, and research papers).
+
+- Add Firestore schema for pinned favorites (`user_favorites` collection or array on
+  user profile with `{ id, entityType, title, progress, total, targetHref }`).
+- Implement "+ Pin something" picker modal allowing users to search and select any
+  existing course, deck, note, or research paper to pin.
+- Implement "Manage" dialog for reordering, renaming, or removing pinned favorites.
+- Visual reference: Favorites shelf in Overview mockup (4 cards wide, 3 pinned cards
+  + 1 dashed "+ Pin something" slot).
+
+### FC-10 — Cross-Entity Unified Recent Activity Feed
+**Key:** 🟢 PARALLEL · Wave 2 · Tier C
+**Depends on:** —
+
+Unify recent interaction history across all core entities into a normalized activity stream
+shown in the Overview "Recently accessed" list.
+
+- Track and aggregate events from:
+  1. Notes reader (reading progress, chapters read, source documents).
+  2. Flashcard decks (SRS study sessions completed, due cards remaining).
+  3. AI Mentor (voice/audio conversation sessions completed, summaries generated).
+  4. Quizzes (completed attempts, scores, and accuracy percentages).
+- Expose server action `getRecentActivityAction(limit = 10)` returning uniform
+  `RecentActivityItem` objects (`type: 'NOTES' | 'FLASHCARDS' | 'MENTOR' | 'QUIZ'`,
+  title, progress text, progress percentage, relative timestamp).
+- Wire deep links for each row directly to the corresponding viewer/session.
+
+### FC-11 — Overview Timeframe Selector & Multi-Window Analytics
+**Key:** 🟢 PARALLEL · Wave 2 · Tier C
+**Depends on:** —
+
+Implement the "Last 7 days" timeframe filter on the Overview "This week at a glance" panel.
+
+- Support selecting time windows: `7d` (Last 7 days), `14d` (Last 14 days), `30d` (Last 30 days),
+  and `all` (All time).
+- Dynamically aggregate:
+  1. Retention sparkline curve and delta (+X pts relative to previous window).
+  2. Daily cards reviewed bar chart across the selected window.
+  3. Study time bar chart and session count.
+  4. Due today queue donut completion gauge.
+- Update `getOverallAnalyticsAction` to accept `{ timeframe: '7d' | '14d' | '30d' | 'all' }`.
+
+### FC-12 — Weak Topic Remediation Study Flow
+**Key:** 🟢 PARALLEL · Wave 2 · Tier B
+**Depends on:** —
+
+Identify lowest-mastery topics dynamically and enable targeted remediation sessions.
+
+- Compute weak spots from SRS ratings (cards rated "Again" or "Hard") and quiz question
+  accuracy per topic tag.
+- Display top 3 weakest topics with their mistake/difficulty frequency score (e.g.
+  `Backpropagation 34`, `Bayes rule 41`, `Attention masks 52`).
+- Clicking "Review these 18 cards →" launches a filtered study session containing only
+  cards belonging to the identified weak topics.
+- Clicking an individual weak topic tag opens a focused drill-down modal or launches
+  a dedicated mini-quiz on that topic.
+
+### FC-13 — Study Tips & Spaced Repetition Best Practices Hub
+**Key:** 🟢 PARALLEL · Wave 2 · Tier D · ⚪ OPTIONAL
+**Depends on:** —
+
+Implement the `/tips` route linked in the sidebar navigation.
+
+- Provide evidence-based study guidance: active recall vs. passive review, optimal
+  SM-2 spacing intervals, interleaving concepts, and managing cognitive load.
+- Include quick interactive cards and best-practice checklists for students preparing
+  for exams or technical interviews.
 
 ---
 
