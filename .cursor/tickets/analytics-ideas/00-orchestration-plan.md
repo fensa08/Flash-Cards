@@ -43,3 +43,4 @@ The original task brief for the adaptive session builder states that `computeCar
 2. Spawn an independent reviewer subagent with the diff + that ticket's Acceptance Criteria checklist, asking it to mechanically verify every item (including "no edits outside the specified files") and to run the suggested tests plus `npm run lint` / `npm run typecheck`.
 3. If the reviewer finds gaps, resume the implementer with the specific feedback and re-review.
 4. Once all 8 are approved, run the full `npm run test` suite once (and `npm run test:integration` for AN04's Firestore-emulator test) to confirm no cross-ticket regression, then integrate.
+    
